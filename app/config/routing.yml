@@ -1,0 +1,4 @@
+ab_parallel_testing:
+    resource: "@ABParallelTestingBundle/Resources/config/routing.yml"
+    prefix:   /
+

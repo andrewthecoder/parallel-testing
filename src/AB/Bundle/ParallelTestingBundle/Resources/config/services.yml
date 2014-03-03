@@ -1,0 +1,7 @@
+parameters:
+#    ab_parallel_testing.example.class: AB\Bundle\ParallelTestingBundle\Example
+
+services:
+#    ab_parallel_testing.example:
+#        class: %ab_parallel_testing.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
