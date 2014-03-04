@@ -2,4 +2,4 @@ _assetic:
     resource: .
     type: assetic
 _app:
-    resource: /home/andrew/distpar/symfony-skeleton/app/config/routing_dev.yml
+    resource: /home/andrew/distpar/parallel-testing/app/config/routing_dev.yml

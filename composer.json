@@ -18,7 +18,9 @@
         "sensio/distribution-bundle": "~2.3",
         "sensio/framework-extra-bundle": "~3.0",
         "sensio/generator-bundle": "~2.3",
-        "incenteev/composer-parameter-handler": "~2.0"
+        "incenteev/composer-parameter-handler": "~2.0",
+        "ob/highcharts-bundle": "1.*",
+        "oryzone/boilerplate-bundle": "4.*"
     },
     "scripts": {
         "post-install-cmd": [
@@ -37,7 +39,9 @@
         ]
     },
     "config": {
-        "bin-dir": "bin"
+        "bin-dir": "bin",
+        "component-dir": "web/components",
+        "component-baseurl": "/components"
     },
     "extra": {
         "symfony-app-dir": "app",

@@ -1602,5 +1602,453 @@
             "i18n",
             "text"
         ]
+    },
+    {
+        "name": "zendframework/zend-stdlib",
+        "version": "2.1.5",
+        "version_normalized": "2.1.5.0",
+        "target-dir": "Zend/Stdlib",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zendframework/Component_ZendStdlib.git",
+            "reference": "1b21f3f9a206bd79da3c660b8c550b50d88f3a7e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/1b21f3f9a206bd79da3c660b8c550b50d88f3a7e",
+            "reference": "1b21f3f9a206bd79da3c660b8c550b50d88f3a7e",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "suggest": {
+            "pecl-weakref": "Implementation of weak references for Stdlib\\CallbackHandler"
+        },
+        "time": "2013-04-15 11:43:47",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.1-dev",
+                "dev-develop": "2.2-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Zend\\Stdlib\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "keywords": [
+            "stdlib",
+            "zf2"
+        ]
+    },
+    {
+        "name": "zendframework/zend-json",
+        "version": "2.1.5",
+        "version_normalized": "2.1.5.0",
+        "target-dir": "Zend/Json",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zendframework/Component_ZendJson.git",
+            "reference": "fa6956862ff0ea61559abf7c112c53a9c024701f"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zendframework/Component_ZendJson/zipball/fa6956862ff0ea61559abf7c112c53a9c024701f",
+            "reference": "fa6956862ff0ea61559abf7c112c53a9c024701f",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3",
+            "zendframework/zend-stdlib": "self.version"
+        },
+        "suggest": {
+            "zendframework/zend-server": "Zend\\Server component"
+        },
+        "time": "2013-04-16 21:18:18",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.1-dev",
+                "dev-develop": "2.2-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Zend\\Json\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "description": "provides convenience methods for serializing native PHP to JSON and decoding JSON to native PHP",
+        "keywords": [
+            "json",
+            "zf2"
+        ]
+    },
+    {
+        "name": "ob/highcharts-bundle",
+        "version": "1.0.1",
+        "version_normalized": "1.0.1.0",
+        "target-dir": "Ob/HighchartsBundle",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/marcaube/ObHighchartsBundle.git",
+            "reference": "519d8c6724807b99459a5ca439c21455bbdb2c2c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/marcaube/ObHighchartsBundle/zipball/519d8c6724807b99459a5ca439c21455bbdb2c2c",
+            "reference": "519d8c6724807b99459a5ca439c21455bbdb2c2c",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0",
+            "symfony/symfony": "2.*",
+            "zendframework/zend-json": "2.1.*@dev"
+        },
+        "time": "2013-11-08 15:28:36",
+        "type": "symfony-bundle",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Ob\\HighchartsBundle": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Marc Aubé"
+            }
+        ],
+        "description": "Symfony2 Bundle that ease the use of highcharts to display rich graph and charts in your app",
+        "homepage": "https://github.com/marcaube/ObHighchartsBundle",
+        "keywords": [
+            "Symfony2",
+            "chart",
+            "charting",
+            "charts",
+            "graph",
+            "graphs",
+            "highcharts",
+            "marcaube",
+            "ob"
+        ]
+    },
+    {
+        "name": "robloach/component-installer",
+        "version": "0.0.12",
+        "version_normalized": "0.0.12.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/RobLoach/component-installer.git",
+            "reference": "1864f25db21fc173e02a359f646acd596c1b0460"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/RobLoach/component-installer/zipball/1864f25db21fc173e02a359f646acd596c1b0460",
+            "reference": "1864f25db21fc173e02a359f646acd596c1b0460",
+            "shasum": ""
+        },
+        "require": {
+            "kriswallsmith/assetic": "1.*",
+            "php": ">=5.3.2"
+        },
+        "require-dev": {
+            "composer/composer": "1.*"
+        },
+        "time": "2013-08-31 23:46:48",
+        "type": "composer-installer",
+        "extra": {
+            "class": "ComponentInstaller\\Installer"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "ComponentInstaller": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Rob Loach",
+                "email": "robloach@gmail.com",
+                "homepage": "http://robloach.net"
+            }
+        ],
+        "description": "Allows installation of Components via Composer."
+    },
+    {
+        "name": "components/jquery",
+        "version": "1.10.2",
+        "version_normalized": "1.10.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/components/jquery.git",
+            "reference": "6b2390db24ba3490ca75251eec4888f7342bf4da"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/components/jquery/zipball/6b2390db24ba3490ca75251eec4888f7342bf4da",
+            "reference": "6b2390db24ba3490ca75251eec4888f7342bf4da",
+            "shasum": ""
+        },
+        "require": {
+            "robloach/component-installer": "*"
+        },
+        "time": "2013-07-04 15:59:41",
+        "type": "component",
+        "extra": {
+            "component": {
+                "scripts": [
+                    "jquery.js"
+                ],
+                "files": [
+                    "jquery.min.js",
+                    "jquery-migrate.js",
+                    "jquery-migrate.min.js"
+                ]
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "John Resig",
+                "email": "jeresig@gmail.com",
+                "homepage": "http://ejohn.org/"
+            }
+        ],
+        "description": "jQuery JavaScript Library",
+        "homepage": "http://jquery.com"
+    },
+    {
+        "name": "components/normalize.css",
+        "version": "1.1.2",
+        "version_normalized": "1.1.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/components/normalize.css.git",
+            "reference": "979bb1d1710554f8c298544d39d985310c2f5070"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/components/normalize.css/zipball/979bb1d1710554f8c298544d39d985310c2f5070",
+            "reference": "979bb1d1710554f8c298544d39d985310c2f5070",
+            "shasum": ""
+        },
+        "require": {
+            "robloach/component-installer": "*"
+        },
+        "time": "2013-10-24 03:37:49",
+        "type": "component",
+        "extra": {
+            "component": {
+                "name": "normalize-css",
+                "styles": [
+                    "normalize.css"
+                ]
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "Normalize.css is a customisable CSS file that makes browsers render all elements more consistently and in line with modern standards.",
+        "homepage": "http://necolas.github.com/normalize.css/"
+    },
+    {
+        "name": "components/modernizr",
+        "version": "2.6.2",
+        "version_normalized": "2.6.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/components/modernizr.git",
+            "reference": "c470050f9906b1197ddaa7aace41f73eba5f4ecf"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/components/modernizr/zipball/c470050f9906b1197ddaa7aace41f73eba5f4ecf",
+            "reference": "c470050f9906b1197ddaa7aace41f73eba5f4ecf",
+            "shasum": ""
+        },
+        "require": {
+            "robloach/component-installer": "*"
+        },
+        "time": "2013-03-31 12:34:31",
+        "type": "component",
+        "extra": {
+            "component": {
+                "scripts": [
+                    "modernizr.js"
+                ],
+                "shim": {
+                    "exports": "window.Modernizr"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Modernizr",
+                "homepage": "http://modernizr.com"
+            },
+            {
+                "name": "Faruk Ates"
+            },
+            {
+                "name": "Paul Irish"
+            },
+            {
+                "name": "Alex Sexton"
+            },
+            {
+                "name": "Ryan Seddon"
+            },
+            {
+                "name": "Alexander Farkas"
+            },
+            {
+                "name": "Ben Alman"
+            },
+            {
+                "name": "Stu Cox"
+            }
+        ],
+        "description": "Modernizr is a JavaScript library that detects HTML5 and CSS3 features in the user's browser.",
+        "homepage": "http://modernizr.com",
+        "keywords": [
+            "CSS3",
+            "HTML5",
+            "browser",
+            "feature detection"
+        ]
+    },
+    {
+        "name": "components/html5-boilerplate",
+        "version": "4.3.0",
+        "version_normalized": "4.3.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/components/html5-boilerplate.git",
+            "reference": "5e639ba074a2a9da46d637f27a70097196592ac1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/components/html5-boilerplate/zipball/5e639ba074a2a9da46d637f27a70097196592ac1",
+            "reference": "5e639ba074a2a9da46d637f27a70097196592ac1",
+            "shasum": ""
+        },
+        "require": {
+            "components/jquery": ">=1.9.1",
+            "components/modernizr": ">=2.6.2",
+            "components/normalize.css": "1.*"
+        },
+        "time": "2013-09-11 04:44:47",
+        "type": "component",
+        "extra": {
+            "component": {
+                "styles": [
+                    "css/main.css"
+                ]
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites.",
+        "homepage": "http://html5boilerplate.com",
+        "keywords": [
+            "CSS3",
+            "HTML5"
+        ]
+    },
+    {
+        "name": "oryzone/boilerplate-bundle",
+        "version": "v4.3.1",
+        "version_normalized": "4.3.1.0",
+        "target-dir": "Oryzone/Bundle/BoilerplateBundle",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Oryzone/OryzoneBoilerplateBundle.git",
+            "reference": "05a7418f1007de61356eec3943df30e41f737c09"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Oryzone/OryzoneBoilerplateBundle/zipball/05a7418f1007de61356eec3943df30e41f737c09",
+            "reference": "05a7418f1007de61356eec3943df30e41f737c09",
+            "shasum": ""
+        },
+        "require": {
+            "components/html5-boilerplate": "4.3.*",
+            "components/jquery": ">=1.10.2,<1.11-dev",
+            "php": ">=5.3.2",
+            "symfony/framework-bundle": ">=2.0,<3.0-dev"
+        },
+        "time": "2013-11-21 10:44:08",
+        "type": "symfony-bundle",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "4.3.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Oryzone\\Bundle\\BoilerplateBundle": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Luciano Mammino",
+                "email": "lmammino@oryzone.com",
+                "homepage": "http://oryzone.com",
+                "role": "Developer"
+            },
+            {
+                "name": "Andrea Mangano",
+                "email": "amangano@oryzone.com",
+                "homepage": "http://oryzone.com",
+                "role": "Designer"
+            }
+        ],
+        "description": "Integrates HTML5 boilerplate in symfony2 with twig",
+        "homepage": "https://github.com/Oryzone/OryzoneBoilerplateBundle",
+        "keywords": [
+            "HTML5",
+            "boilerplate",
+            "h5b",
+            "html",
+            "twig"
+        ]
     }
 ]
