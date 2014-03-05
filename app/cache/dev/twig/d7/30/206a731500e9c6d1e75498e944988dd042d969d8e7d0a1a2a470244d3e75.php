@@ -14,6 +14,7 @@ class __TwigTemplate_d730206a731500e9c6d1e75498e944988dd042d969d8e7d0a1a2a470244
             'body_container_header' => array($this, 'block_body_container_header'),
             'body_container_main' => array($this, 'block_body_container_main'),
             'body_container_footer' => array($this, 'block_body_container_footer'),
+            'body_js' => array($this, 'block_body_js'),
         );
     }
 
@@ -30,14 +31,14 @@ class __TwigTemplate_d730206a731500e9c6d1e75498e944988dd042d969d8e7d0a1a2a470244
     // line 5
     public function block_head_title($context, array $blocks = array())
     {
-        echo "Parallel Testing: Charts";
+        echo "Parallel Testing";
     }
 
     // line 7
     public function block_body_container_header($context, array $blocks = array())
     {
         // line 8
-        echo "    <h1>Highchart Test</h1>
+        echo "    <h1>Parallel Test</h1>
 ";
     }
 
@@ -45,33 +46,64 @@ class __TwigTemplate_d730206a731500e9c6d1e75498e944988dd042d969d8e7d0a1a2a470244
     public function block_body_container_main($context, array $blocks = array())
     {
         // line 12
-        echo "\t<!-- Load jQuery from Google's CDN if needed -->
-\t<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\" type=\"text/javascript\"></script>
-
-\t<script src=\"";
-        // line 15
-        echo twig_escape_filter($this->env, $this->env->getExtension('assets')->getAssetUrl("bundles/obhighcharts/js/highcharts/highcharts.js"), "html", null, true);
-        echo "\"></script>
-\t<script src=\"";
-        // line 16
-        echo twig_escape_filter($this->env, $this->env->getExtension('assets')->getAssetUrl("bundles/obhighcharts/js/highcharts/modules/exporting.js"), "html", null, true);
-        echo "\"></script>
-\t<script type=\"text/javascript\">
-\t";
-        // line 18
-        echo $this->env->getExtension('highcharts_extension')->chart((isset($context["chart"]) ? $context["chart"] : $this->getContext($context, "chart")));
+        echo "\t<div id=\"debug\">
+\t\t<pre>
+\t\t\t";
+        // line 14
+        echo twig_escape_filter($this->env, (isset($context["debugMessage"]) ? $context["debugMessage"] : $this->getContext($context, "debugMessage")), "html", null, true);
         echo "
-\t</script>
-
-\t<div id=\"linechart\" style=\"min-width: 400px; height: 400px; margin: 0 auto\"></div>
+\t\t</pre>
+\t</div>
+\t<div id=\"output\" data-testid='";
+        // line 17
+        echo twig_escape_filter($this->env, (isset($context["testid"]) ? $context["testid"] : $this->getContext($context, "testid")), "html", null, true);
+        echo "' >
+\t\t<pre>
+\t\t</pre>
+\t</div>
 ";
     }
 
-    // line 24
+    // line 23
     public function block_body_container_footer($context, array $blocks = array())
     {
-        // line 25
+        // line 24
         echo "    Andrew Beveridge [ab441] 2014
+";
+    }
+
+    // line 27
+    public function block_body_js($context, array $blocks = array())
+    {
+        // line 28
+        echo "\t<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\" type=\"text/javascript\"></script>
+\t
+\t
+\t<script type=\"text/javascript\">
+\t\t\$(document).ready(function(){
+
+function update_output() {
+\t\t\t   \$.ajax( {
+\t\t\t\t\ttype: 'POST',
+\t\t\t\t\turl: '/distpar/parallel-testing/web/app_dev.php/check',
+\t\t\t\t\tdata: {
+\t\t\t\t\t\t'testid': \$('#output').data('testid')
+\t\t\t\t\t},
+\t\t\t\t\tdataType: 'json',
+\t\t\t\t\tsuccess: function(result){
+if (result.status == 'running') {
+ setTimeout(function() { update_output(); }, 1000);
+ }
+\$('#output pre').text(result.output);
+\t\t\t\t\t},
+\t\t\t\t\terror: function(xhr, ajaxOptions, thrownError){ alert('Error: ' + thrownError); }
+\t    \t   });
+}
+
+update_output();
+\t\t});
+\t</script>
+
 ";
     }
 
@@ -87,6 +119,6 @@ class __TwigTemplate_d730206a731500e9c6d1e75498e944988dd042d969d8e7d0a1a2a470244
 
     public function getDebugInfo()
     {
-        return array (  74 => 25,  71 => 24,  62 => 18,  57 => 16,  53 => 15,  48 => 12,  45 => 11,  40 => 8,  37 => 7,  31 => 5,);
+        return array (  79 => 28,  76 => 27,  71 => 24,  68 => 23,  59 => 17,  53 => 14,  49 => 12,  46 => 11,  41 => 8,  38 => 7,  32 => 5,);
     }
 }

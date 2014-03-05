@@ -561,7 +561,7 @@ class appDevDebugProjectContainer extends Container
         $b = new \Doctrine\DBAL\Configuration();
         $b->setSQLLogger($a);
 
-        return $this->services['doctrine.dbal.default_connection'] = $this->get('doctrine.dbal.connection_factory')->createConnection(array('driver' => 'pdo_mysql', 'host' => '127.0.0.1', 'port' => NULL, 'dbname' => 'databaseName', 'user' => 'databaseUser', 'password' => 'databasePassword', 'charset' => 'UTF8', 'driverOptions' => array()), $b, new \Symfony\Bridge\Doctrine\ContainerAwareEventManager($this), array());
+        return $this->services['doctrine.dbal.default_connection'] = $this->get('doctrine.dbal.connection_factory')->createConnection(array('driver' => 'pdo_mysql', 'host' => '127.0.0.1', 'port' => 3306, 'dbname' => 'paralleltest', 'user' => 'andrew', 'password' => 'Cheesygit182!', 'charset' => 'UTF8', 'driverOptions' => array()), $b, new \Symfony\Bridge\Doctrine\ContainerAwareEventManager($this), array());
     }
 
     /**
@@ -2775,8 +2775,8 @@ class appDevDebugProjectContainer extends Container
         $instance->addPath('/home/andrew/distpar/parallel-testing/vendor/symfony/symfony/src/Symfony/Bundle/TwigBundle/Resources/views', 'Twig');
         $instance->addPath('/home/andrew/distpar/parallel-testing/vendor/symfony/swiftmailer-bundle/Symfony/Bundle/SwiftmailerBundle/Resources/views', 'Swiftmailer');
         $instance->addPath('/home/andrew/distpar/parallel-testing/vendor/doctrine/doctrine-bundle/Doctrine/Bundle/DoctrineBundle/Resources/views', 'Doctrine');
-        $instance->addPath('/home/andrew/distpar/parallel-testing/src/AB/Bundle/ParallelTestingBundle/Resources/views', 'ABParallelTesting');
         $instance->addPath('/home/andrew/distpar/parallel-testing/vendor/oryzone/boilerplate-bundle/Oryzone/Bundle/BoilerplateBundle/Resources/views', 'OryzoneBoilerplate');
+        $instance->addPath('/home/andrew/distpar/parallel-testing/src/AB/ParallelTestingBundle/Resources/views', 'ABParallelTesting');
         $instance->addPath('/home/andrew/distpar/parallel-testing/vendor/symfony/symfony/src/Symfony/Bundle/WebProfilerBundle/Resources/views', 'WebProfiler');
         $instance->addPath('/home/andrew/distpar/parallel-testing/vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/views', 'SensioDistribution');
         $instance->addPath('/home/andrew/distpar/parallel-testing/app/Resources/views');
@@ -3147,8 +3147,8 @@ class appDevDebugProjectContainer extends Container
                 'DoctrineBundle' => 'Doctrine\\Bundle\\DoctrineBundle\\DoctrineBundle',
                 'SensioFrameworkExtraBundle' => 'Sensio\\Bundle\\FrameworkExtraBundle\\SensioFrameworkExtraBundle',
                 'ObHighchartsBundle' => 'Ob\\HighchartsBundle\\ObHighchartsBundle',
-                'ABParallelTestingBundle' => 'AB\\Bundle\\ParallelTestingBundle\\ABParallelTestingBundle',
                 'OryzoneBoilerplateBundle' => 'Oryzone\\Bundle\\BoilerplateBundle\\OryzoneBoilerplateBundle',
+                'ABParallelTestingBundle' => 'AB\\ParallelTestingBundle\\ABParallelTestingBundle',
                 'WebProfilerBundle' => 'Symfony\\Bundle\\WebProfilerBundle\\WebProfilerBundle',
                 'SensioDistributionBundle' => 'Sensio\\Bundle\\DistributionBundle\\SensioDistributionBundle',
                 'SensioGeneratorBundle' => 'Sensio\\Bundle\\GeneratorBundle\\SensioGeneratorBundle',
@@ -3157,10 +3157,10 @@ class appDevDebugProjectContainer extends Container
             'kernel.container_class' => 'appDevDebugProjectContainer',
             'database_driver' => 'pdo_mysql',
             'database_host' => '127.0.0.1',
-            'database_port' => NULL,
-            'database_name' => 'databaseName',
-            'database_user' => 'databaseUser',
-            'database_password' => 'databasePassword',
+            'database_port' => 3306,
+            'database_name' => 'paralleltest',
+            'database_user' => 'andrew',
+            'database_password' => 'Cheesygit182!',
             'mailer_transport' => 'smtp',
             'mailer_host' => '127.0.0.1',
             'mailer_user' => NULL,

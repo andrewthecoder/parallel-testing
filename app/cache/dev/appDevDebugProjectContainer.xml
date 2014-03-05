@@ -17,8 +17,8 @@
       <parameter key="DoctrineBundle">Doctrine\Bundle\DoctrineBundle\DoctrineBundle</parameter>
       <parameter key="SensioFrameworkExtraBundle">Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle</parameter>
       <parameter key="ObHighchartsBundle">Ob\HighchartsBundle\ObHighchartsBundle</parameter>
-      <parameter key="ABParallelTestingBundle">AB\Bundle\ParallelTestingBundle\ABParallelTestingBundle</parameter>
       <parameter key="OryzoneBoilerplateBundle">Oryzone\Bundle\BoilerplateBundle\OryzoneBoilerplateBundle</parameter>
+      <parameter key="ABParallelTestingBundle">AB\ParallelTestingBundle\ABParallelTestingBundle</parameter>
       <parameter key="WebProfilerBundle">Symfony\Bundle\WebProfilerBundle\WebProfilerBundle</parameter>
       <parameter key="SensioDistributionBundle">Sensio\Bundle\DistributionBundle\SensioDistributionBundle</parameter>
       <parameter key="SensioGeneratorBundle">Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle</parameter>
@@ -27,10 +27,10 @@
     <parameter key="kernel.container_class">appDevDebugProjectContainer</parameter>
     <parameter key="database_driver">pdo_mysql</parameter>
     <parameter key="database_host">127.0.0.1</parameter>
-    <parameter key="database_port">null</parameter>
-    <parameter key="database_name">databaseName</parameter>
-    <parameter key="database_user">databaseUser</parameter>
-    <parameter key="database_password">databasePassword</parameter>
+    <parameter key="database_port">3306</parameter>
+    <parameter key="database_name">paralleltest</parameter>
+    <parameter key="database_user">andrew</parameter>
+    <parameter key="database_password">Cheesygit182!</parameter>
     <parameter key="mailer_transport">smtp</parameter>
     <parameter key="mailer_host">127.0.0.1</parameter>
     <parameter key="mailer_user">null</parameter>
@@ -1829,10 +1829,10 @@
       <argument type="collection">
         <argument key="driver">pdo_mysql</argument>
         <argument key="host">127.0.0.1</argument>
-        <argument key="port">null</argument>
-        <argument key="dbname">databaseName</argument>
-        <argument key="user">databaseUser</argument>
-        <argument key="password">databasePassword</argument>
+        <argument key="port">3306</argument>
+        <argument key="dbname">paralleltest</argument>
+        <argument key="user">andrew</argument>
+        <argument key="password">Cheesygit182!</argument>
         <argument key="charset">UTF8</argument>
         <argument key="driverOptions" type="collection"/>
       </argument>
@@ -2277,12 +2277,12 @@
         <argument>Doctrine</argument>
       </call>
       <call method="addPath">
-        <argument>/home/andrew/distpar/parallel-testing/src/AB/Bundle/ParallelTestingBundle/Resources/views</argument>
-        <argument>ABParallelTesting</argument>
-      </call>
-      <call method="addPath">
         <argument>/home/andrew/distpar/parallel-testing/vendor/oryzone/boilerplate-bundle/Oryzone/Bundle/BoilerplateBundle/Resources/views</argument>
         <argument>OryzoneBoilerplate</argument>
+      </call>
+      <call method="addPath">
+        <argument>/home/andrew/distpar/parallel-testing/src/AB/ParallelTestingBundle/Resources/views</argument>
+        <argument>ABParallelTesting</argument>
       </call>
       <call method="addPath">
         <argument>/home/andrew/distpar/parallel-testing/vendor/symfony/symfony/src/Symfony/Bundle/WebProfilerBundle/Resources/views</argument>

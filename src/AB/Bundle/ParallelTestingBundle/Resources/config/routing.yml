@@ -1,3 +1,0 @@
-ab_parallel_testing_homepage:
-    pattern:  /
-    defaults: { _controller: ABParallelTestingBundle:Default:index }
