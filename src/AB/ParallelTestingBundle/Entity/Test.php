@@ -59,28 +59,35 @@ class Test
     /**
      * @var string
      *
-     * @ORM\Column(name="fullCommand", type="string", length=500)
+     * @ORM\Column(name="fullCommand", type="text")
      */
     private $fullCommand;
 
     /**
-     * @var string
+     * @var integer
      *
-     * @ORM\Column(name="systemRunTime", type="string", length=255)
+     * @ORM\Column(name="processPID", type="integer")
+     */
+    private $processPID;
+
+    /**
+     * @var decimal
+     *
+     * @ORM\Column(name="systemRunTime", type="decimal", precision=7, scale=2)
      */
     private $systemRunTime;
 
     /**
-     * @var string
+     * @var decimal
      *
-     * @ORM\Column(name="clockRunTime", type="string", length=255)
+     * @ORM\Column(name="clockRunTime", type="decimal", precision=7, scale=2)
      */
     private $clockRunTime;
 
     /**
-     * @var string
+     * @var decimal
      *
-     * @ORM\Column(name="cpuPercent", type="string", length=255)
+     * @ORM\Column(name="cpuPercent", type="decimal", precision=7, scale=2)
      */
     private $cpuPercent;
 
@@ -165,6 +172,29 @@ class Test
     }
 
     /**
+     * Set processPID
+     *
+     * @param integer $processPID
+     * @return Test
+     */
+    public function setProcessPID($processPID)
+    {
+        $this->processPID = $processPID;
+
+        return $this;
+    }
+
+    /**
+     * Get processPID
+     *
+     * @return integer 
+     */
+    public function getProcessPID()
+    {
+        return $this->processPID;
+    }
+
+    /**
      * Set status
      *
      * @param string $status
@@ -236,7 +266,7 @@ class Test
     /**
      * Set systemRunTime
      *
-     * @param string $systemRunTime
+     * @param decimal $systemRunTime
      * @return Test
      */
     public function setSystemRunTime($systemRunTime)
@@ -249,7 +279,7 @@ class Test
     /**
      * Get systemRunTime
      *
-     * @return string 
+     * @return decimal 
      */
     public function getSystemRunTime()
     {
@@ -259,7 +289,7 @@ class Test
     /**
      * Set clockRunTime
      *
-     * @param string $clockRunTime
+     * @param decimal $clockRunTime
      * @return Test
      */
     public function setClockRunTime($clockRunTime)
@@ -272,7 +302,7 @@ class Test
     /**
      * Get clockRunTime
      *
-     * @return string 
+     * @return decimal 
      */
     public function getClockRunTime()
     {
@@ -282,7 +312,7 @@ class Test
     /**
      * Set cpuPercent
      *
-     * @param string $cpuPercent
+     * @param decimal $cpuPercent
      * @return Test
      */
     public function setCpuPercent($cpuPercent)
@@ -295,7 +325,7 @@ class Test
     /**
      * Get cpuPercent
      *
-     * @return string 
+     * @return decimal 
      */
     public function getCpuPercent()
     {
