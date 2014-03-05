@@ -13,5 +13,20 @@ use Doctrine\ORM\EntityRepository;
 class TestRepository extends EntityRepository
 {
 
+	public function findAveragedResults($type)
+    {
+		return $this->getEntityManager()
+			->createQueryBuilder()
+			->select('t.type, t.upperLimit, 
+						AVG(t.clockRunTime) AS averageTime,
+						AVG(t.systemRunTime) AS averageSystemTime,  
+						AVG(t.cpuPercent) AS averageCPU')
+			->from('ABParallelTestingBundle:Test', 't')
+			->where('t.type = :type')
+			->setParameter('type', $type)
+			->groupBy('t.type, t.upperLimit')
+			->getQuery()
+			->getResult();
+    }
 	
 }

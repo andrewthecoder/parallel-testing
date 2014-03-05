@@ -1,78 +1,65 @@
-// TotientRance.c - Sequential Euler Totient Function (C Version)
-// compile: gcc -Wall -O -o TotientRange TotientRange.c
-// run:     ./TotientRange lower_num uppper_num
-
-// Greg Michaelson 14/10/2003
-// Patrick Maier   29/01/2010 [enforced ANSI C compliance]
-
-// This program calculates the sum of the totients between a lower and an 
-// upper limit using C longs. It is based on earlier work by:
-// Phil Trinder, Nathan Charles, Hans-Wolfgang Loidl and Colin Runciman
+// Distributed and parallel technologies, Andrew Beveridge, 03/03/2014
+// To Compile:		gcc -Wall -O -o ab-totient-sequential ab-totient-sequential.c
+// To Run / Time:	/usr/bin/time -v ./ab-totient-sequential range_start range_end
 
 #include <stdio.h>
 
-// hcf x 0 = x
-// hcf x y = hcf y (rem x y)
+/* 	When input is a prime number, the totient is simply the prime number - 1. Totient is always even (except for 1).
+	If n is a positive integer, then φ(n) is the number of integers k in the range 1 ≤ k ≤ n for which gcd(n, k) = 1  */
+long getTotient (long number) {
+	long result = number;
 
-long hcf(long x, long y)
-{
-  long t;
+    // Check every prime number below the square root for divisibility
+    if(number % 2 == 0){
+        result -= result / 2;
+        do 
+            number /= 2;
+        while(number %2 == 0);
+    }
 
-  while (y != 0) {
-    t = x % y;
-    x = y;
-    y = t;
-  }
-  return x;
+    // Primitive replacement for a list of primes, looping through every odd number
+    long prime;
+	for(prime = 3; prime * prime <= number; prime += 2){
+        if(number %prime == 0){
+            result -= result / prime;
+            do 
+                number /= prime;
+            while(number % prime == 0);
+        }
+    }
+	
+    // Last common factor 
+    if(number > 1) 
+        result -= result / number;
+
+    // Return the result. 
+    return result; 
 }
 
+// Main method.
+int main(int argc, char ** argv) {
+	// Load inputs
+	long lower, upper;
+	sscanf(argv[1], "%ld", &lower);
+	sscanf(argv[2], "%ld", &upper);
 
-// relprime x y = hcf x y == 1
+	int i; 
+	long result = 0.0;
+	
+	// We know the answer if it's 1; no need to execute the function
+	if(lower == 1) {
+		result = 1.0;
+		lower = 2;
+	}
 
-int relprime(long x, long y)
-{
-  return hcf(x, y) == 1;
-}
-
-
-// euler n = length (filter (relprime n) [1 .. n-1])
-
-long euler(long n)
-{
-  long length, i;
-
-  length = 0;
-  for (i = 1; i < n; i++)
-    if (relprime(n, i))
-      length++;
-  return length;
-}
-
-
-// sumTotient lower upper = sum (map euler [lower, lower+1 .. upper])
-
-long sumTotient(long lower, long upper)
-{
-  long sum, i;
-
-  sum = 0;
-  for (i = lower; i <= upper; i++)
-    sum = sum + euler(i);
-  return sum;
-}
-
-
-int main(int argc, char ** argv)
-{
-  long lower, upper;
-
-  if (argc != 3) {
-    printf("not 2 arguments\n");
-    return 1;
-  }
-  sscanf(argv[1], "%ld", &lower);
-  sscanf(argv[2], "%ld", &upper);
-  printf("C: Sum of Totients  between [%ld..%ld] is %ld\n",
-         lower, upper, sumTotient(lower, upper));
-  return 0;
+	// Sum all totients in the specified range
+	for (i = lower; i <= upper; i++) {
+		result = result + getTotient(i);
+	}
+	
+	// Print the result
+	printf("Sum of Totients between [%ld..%ld] is %ld \n", lower, upper, result);
+	
+	// A-OK!
+	return 0;
 }

@@ -8,23 +8,26 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Process\Process;
+use Zend\Json\Expr;
 use Ob\HighchartsBundle\Highcharts\Highchart;
 use AB\ParallelTestingBundle\Entity\Test;
 
 class DefaultController extends Controller
 {
-	private $testTempDirectory;
-
     public function indexAction()
     {
+		$testTempDirectory = $this->container->getParameter('kernel.cache_dir') . '/ABParallelTestingBundle';
+		
 		$fs = new Filesystem();
-		if( $fs->exists($testTempDirectory = $this->container->getParameter('kernel.cache_dir') . '/ABParallelTestingBundle') === false ) {
+		if( $fs->exists($testTempDirectory) === false ) {
 			try {
 				$fs->mkdir($testTempDirectory);
 			} catch (IOException $e) {
 				echo "An error occurred while attempting to create temporary directory $testTempDirectory";
 			}
 		}
+		
+		$fs->copy($this->get('kernel')->getRootDir()."/../src/AB/ParallelTestingBundle/Resources/code/queue.json", "$testTempDirectory/queue.json", true);
 		
 		return $this->render('ABParallelTestingBundle:Default:index.html.twig', array(
 			'debugMessage' => isset($debugMessage) ? $debugMessage : ''
@@ -33,17 +36,156 @@ class DefaultController extends Controller
 	
     public function updateAction()
     {
-		$updateOutput = "hello world";
-		
 		$response = new Response();
+		$queueStatus = 'running';
+		
+		// Browser has fired off an	update poll, let's figure out how to deal with it.
+		// Firstly, let's check if we're already doing something or not
+		$ready = $this->systemReadyForTest();
+		if( $ready !== true && $ready !== false ) {
+			$updateOutput = $ready;
+		} elseif( $ready === false ) {
+			$testRepository = $this->getDoctrine()->getRepository('ABParallelTestingBundle:Test');
+			$runningTest = $testRepository->findOneByStatus('running');
+			
+			$testStatus = $this->checkTestFinished( $runningTest->getId() );
+			if( $testStatus === true ) {
+				$updateOutput = "Successfully finished test ID ".$runningTest->getId().": Calculated totients from ".$runningTest->getLowerLimit()."-".$runningTest->getUpperLimit()." in ".$runningTest->getClockRunTime()." seconds.";
+			} else {
+				$updateOutput = $testStatus;
+			}			
+		} elseif( $ready === true ) {
+			$testQueue = $this->readTestQueue();
+			if( empty($testQueue) === false ) {
+				$newTestParameters = array_shift($testQueue);
+				$this->writeTestQueue($testQueue);
+				
+				$testID = $this->createTest($newTestParameters->type, $newTestParameters->lowerLimit, $newTestParameters->upperLimit);
+				
+				$testPrepared = $this->prepareTest($testID);
+				if( $testPrepared === true ) {
+					$testStarted = $this->startTest($testID);
+					if( $testStarted === true ) {
+						$updateOutput = "Started test ID $testID";
+					} else {
+						$updateOutput = $testStarted;
+					}
+				} else {
+					$updateOutput = $testPrepared;
+				}
+			} else {
+				$queueStatus = 'finished';
+				$updateOutput = 'All tests in queue have been completed';
+			}
+		}
+		
 		$response->setContent(json_encode(array(
-				'queue' => 'running',
+				'queue' => $queueStatus,
 				'output' => $updateOutput
 		)));
 		$response->setStatusCode(Response::HTTP_OK);
 		$response->headers->set('Content-Type', 'application/json');
 		return $response;
     }
+	
+	public function chartsAction() {
+		$repository = $this->getDoctrine()->getRepository('ABParallelTestingBundle:Test');
+		
+		$slowsequential = $repository->findAveragedResults('slowsequential');
+		$sequential = $repository->findAveragedResults('sequential');
+		$openmp = $repository->findAveragedResults('openmp');
+		$mpi = $repository->findAveragedResults('mpi');
+		
+        $ob = new Highchart();
+        $ob->chart->renderTo('linechart');  // The #id of the div where to render the chart
+        $ob->title->text('Parallel Programming vs Sequential Programming');
+		
+		$sequentialData = array();
+		foreach($sequential as $result) {
+			if(!is_null($result['averageTime']))
+				$sequentialData[] = array($result['upperLimit'], (float)$result['averageTime']);
+		}
+		$slowSequentialData = array();
+		foreach($slowsequential as $result) {
+			if(!is_null($result['averageTime']))
+				$slowSequentialData[] = array($result['upperLimit'], (float)$result['averageTime']);
+		}
+		$openmpData = array();
+		foreach($openmp as $result) {
+			if(!is_null($result['averageTime']))
+			$openmpData[] = array($result['upperLimit'], (float)$result['averageTime']);
+		}
+		$mpiData = array();
+		foreach($mpi as $result) {
+			if(!is_null($result['averageTime']))
+			$mpiData[] = array($result['upperLimit'], (float)$result['averageTime']);
+		}
+		
+		$xData = array(
+			array(
+				'title' => array(
+					'text'  => 'Totient Range Upper Limit',
+					'style' => array('color' => '#000000')
+				),
+				'opposite' => true
+			)
+		);
+		$ob->xAxis($xData);
+		
+		$yData = array(
+			array(
+				'labels' => array(
+					'formatter' => new Expr('function () { return this.value + " s" }')
+				),
+				'title' => array(
+					'text'  => 'Execution Time',
+					'style' => array('color' => '#000000')
+				)
+			)
+		);
+		$ob->yAxis($yData);
+		
+		$formatter = new Expr('function () {
+                 return "<b>Execution Type:</b> "+this.series.name+"<br /><br /><b>Totient Range:</b> 1 to " + this.x + "<br /><b>Average Time:</b> " + this.y + " seconds";
+             }');
+		$ob->tooltip->formatter($formatter);
+		$ob->series(array(
+			array('type' => 'spline','color' => '#000000','name' => 'Bad Sequential', 'data' => $slowSequentialData),
+			array('type' => 'spline','color' => '#AA4643','name' => 'Good Sequential', 'data' => $sequentialData),
+			array('type' => 'spline','color' => '#89A54E','name' => 'OpenMP', 'data' => $openmpData),
+			array('type' => 'spline','color' => '#4572A7','name' => 'MPI', 'data' => $mpiData)
+		));
+		
+		
+		
+        /*$ob2 = new Highchart();
+        $ob2->chart->renderTo('linechart2');  // The #id of the div where to render the chart
+        $ob2->title->text('Parallel Programming API Comparison');
+		
+        $ob2->xAxis->title(array('text'  => "Range of integer values"));
+        $ob2->yAxis->title(array('text'  => "Execution time (s)"));
+		
+		$ob2->series(array(
+			array('type' => 'spline','name' => 'OpenMP', 'data' => $openmpData),
+			array('type' => 'spline','name' => 'MPI', 'data' => $mpiData)
+		));*/
+		
+		
+		return $this->render('ABParallelTestingBundle:Default:charts.html.twig', array(
+            'chart' => $ob /*,
+            'chart2' => $ob2*/
+        ));
+	}
+	
+	public function readTestQueue() {
+		$testTempDirectory = $this->container->getParameter('kernel.cache_dir') . '/ABParallelTestingBundle';
+		return json_decode( file_get_contents("$testTempDirectory/queue.json") );
+	}
+	
+	public function writeTestQueue($testQueue) {
+		$testTempDirectory = $this->container->getParameter('kernel.cache_dir') . '/ABParallelTestingBundle';
+		file_put_contents("$testTempDirectory/queue.json", json_encode($testQueue) );
+	}
 	
 	public function createTest($type, $lowerLimit, $upperLimit)
 	{
@@ -53,14 +195,16 @@ class DefaultController extends Controller
 		$test->setUpperLimit($upperLimit);
 		$test->setStatus('new');
 		
+		
 		$em = $this->getDoctrine()->getManager();
 		$em->persist($test);
 		$em->flush();
 
-		return $product->getId();
+		return $test->getId();
 	}
 	
 	public function prepareTest($testID) {
+		$testTempDirectory = $this->container->getParameter('kernel.cache_dir') . '/ABParallelTestingBundle';
 		$test = $this->getDoctrine()->getRepository('ABParallelTestingBundle:Test')->find($testID);
 		if (!$test) {
 			throw $this->createNotFoundException(
@@ -70,8 +214,7 @@ class DefaultController extends Controller
 		}
 		
 		if($testStatus = $test->getStatus() !=='new') {
-			echo "Test with ID $testID is not 'new', it is $testStatus. As such, it cannot be prepared.";
-			return false;
+			return "Test with ID $testID is not 'new', it is $testStatus. As such, it cannot be prepared.";
 		}
 		
 		$fs = new Filesystem();
@@ -79,11 +222,10 @@ class DefaultController extends Controller
 			$fs->touch($timeOutputPath = "$testTempDirectory/testID-$testID-timeOutput.txt");
 			$fs->touch($programOutputPath = "$testTempDirectory/testID-$testID-programOutput.txt");
 		} catch (IOException $e) {
-			echo "An error occurred while attempting to create output file $testTempDirectory/testID-$testID-timeOutput.txt";
-			return false;
+			return "An error occurred while attempting to create output file $testTempDirectory/testID-$testID-timeOutput.txt";
 		}
 		
-		$binDir = $this->get('kernel')->getRootDir()."/src/AB/ParallelTestingBundle/Resources/code/totient";
+		$binDir = $this->get('kernel')->getRootDir()."/../src/AB/ParallelTestingBundle/Resources/code/totient";
 		$lowerLimit = $test->getLowerLimit();
 		$upperLimit = $test->getUpperLimit();
 		
@@ -102,6 +244,7 @@ class DefaultController extends Controller
 		$test->setFullCommand("/usr/bin/time -v -o $timeOutputPath $testCommand > $programOutputPath 2>&1");
 		$test->setStatus('ready');
 		
+		$em = $this->getDoctrine()->getManager();
 		$em->flush();
 		return true;
 	}
@@ -112,11 +255,13 @@ class DefaultController extends Controller
 		$testRepository = $this->getDoctrine()->getRepository('ABParallelTestingBundle:Test');
 		$runningTests = $testRepository->findByStatus('running');
 		if( count( $runningTests ) > 0 ) {
-			return count( $runningTests )." test(s) are already running.";
+			return false;
 		}
 		
 		// Our database thinks no tests are running. Let's double check process names for good measure.
-		$pidOfAnyTotientPrograms = new Process("pidof ab-totient-sequential ab-totient-omp ab-totient-mpi 2>&1")->run()->getOutput();
+		$pidOfAnyTotientProgramsProcess = new Process("pidof ab-totient-sequential ab-totient-omp ab-totient-mpi mpirun 2>&1");
+		$pidOfAnyTotientProgramsProcess->run();
+		$pidOfAnyTotientPrograms = $pidOfAnyTotientProgramsProcess->getOutput();
 		if( empty($pidOfAnyTotientPrograms) !== true ) {
 			return "The database thinks there are no tests running, but these PIDs still exist: $pidOfAnyTotientPrograms.";
 		}
@@ -145,22 +290,26 @@ class DefaultController extends Controller
 		}
 		
 		if($testStatus = $test->getStatus() !=='ready') {
-			echo "Test with ID $testID is not 'ready', it is $testStatus. As such, it cannot be started.";
-			return false;
+			return "Test with ID $testID is not 'ready', it is $testStatus. As such, it cannot be started.";
 		}
 		
-		$process = new Process($test->getFullCommand);
+		$process = new Process($test->getFullCommand());
 		$process->start();
 		
-		$pidOfAnyTotientPrograms = new Process("pidof ab-totient-sequential ab-totient-omp ab-totient-mpi 2>&1")->run()->getOutput();
-		$test->setProcessPID($pidOfAnyTotientPrograms);
+		$pidOfAnyTotientProgramsProcess = new Process("pidof ab-totient-sequential ab-totient-omp ab-totient-mpi mpirun 2>&1");
+		$pidOfAnyTotientProgramsProcess->run();
+		$pidOfAnyTotientPrograms = $pidOfAnyTotientProgramsProcess->getOutput();
+		
+		$test->setProcessPID($pidOfAnyTotientPrograms ? $pidOfAnyTotientPrograms : 54321);
 		$test->setStatus('running');
 		
+		$em = $this->getDoctrine()->getManager();
 		$em->flush();
 		return true;
 	}
 	
 	public function checkTestFinished($testID) {
+		$testTempDirectory = $this->container->getParameter('kernel.cache_dir') . '/ABParallelTestingBundle';
 		$test = $this->getDoctrine()->getRepository('ABParallelTestingBundle:Test')->find($testID);
 		if (!$test) {
 			throw $this->createNotFoundException(
@@ -170,22 +319,23 @@ class DefaultController extends Controller
 		}
 		
 		if($testStatus = $test->getStatus() !=='running') {
-			echo "Test with ID $testID is not 'running', it is $testStatus. As such, it cannot be checked.";
-			return false;
+			return "Test with ID $testID is not 'running', it is $testStatus. As such, it cannot be checked.";
 		}
 		
 		$pid = $test->getProcessPID();
-		$psOutput = new Process("ps -p $pid 2>&1")->run()->getOutput(); 
-		if(strstr(':', $psOutput) !== false) {
-			// There's a colon in the pc output, so the test must still be running.
+		$psProcess = new Process("ps -p $pid 2>&1");
+		$psProcess->run();
+		$psOutput = $psProcess->getOutput(); 
+		if(strpos($psOutput, ':') !== false) {
+			// There's a colon in the ps output, so the test must still be running.
 			return $psOutput;
 		} else {
 			// Process seems to have finished, load output files into database and set status
-			$programOutputPath = "$testTempDirectory/testID-$testID-programOutput.txt");
+			$programOutputPath = "$testTempDirectory/testID-$testID-programOutput.txt";
 			$test->setProgramOutput( file_get_contents($programOutputPath) );
 			unlink($programOutputPath);
 			
-			$timeOutputPath = "$testTempDirectory/testID-$testID-timeOutput.txt");
+			$timeOutputPath = "$testTempDirectory/testID-$testID-timeOutput.txt";
 			$timeOut = file_get_contents($timeOutputPath);
 			
 			$cpuPercent = preg_replace("|.+CPU.+?([0-9.]+%).+|s", '$1', $timeOut);
@@ -201,6 +351,7 @@ class DefaultController extends Controller
 			unlink($timeOutputPath);
 			
 			$test->setStatus('finished');
+			$em = $this->getDoctrine()->getManager();
 			$em->flush();
 			return true;
 		}

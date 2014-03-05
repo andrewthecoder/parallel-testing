@@ -186,25 +186,22 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
         }
 
         // ab_parallel_testing_homepage
-        if (0 === strpos($pathinfo, '/main') && preg_match('#^/main/(?P<count>[^/]++)/?$#s', $pathinfo, $matches)) {
+        if (rtrim($pathinfo, '/') === '') {
             if (substr($pathinfo, -1) !== '/') {
                 return $this->redirect($pathinfo.'/', 'ab_parallel_testing_homepage');
             }
 
-            return $this->mergeDefaults(array_replace($matches, array('_route' => 'ab_parallel_testing_homepage')), array (  '_controller' => 'AB\\Bundle\\ParallelTestingBundle\\Controller\\DefaultController::indexAction',));
+            return array (  '_controller' => 'AB\\ParallelTestingBundle\\Controller\\DefaultController::indexAction',  '_route' => 'ab_parallel_testing_homepage',);
         }
 
-        if (0 === strpos($pathinfo, '/ch')) {
-            // ab_parallel_testing_charts
-            if ($pathinfo === '/charts') {
-                return array (  '_controller' => 'AB\\Bundle\\ParallelTestingBundle\\Controller\\DefaultController::chartsAction',  '_route' => 'ab_parallel_testing_charts',);
-            }
+        // ab_parallel_testing_update
+        if ($pathinfo === '/update') {
+            return array (  '_controller' => 'AB\\ParallelTestingBundle\\Controller\\DefaultController::updateAction',  '_route' => 'ab_parallel_testing_update',);
+        }
 
-            // ab_parallel_testing_check
-            if ($pathinfo === '/check') {
-                return array (  '_controller' => 'AB\\Bundle\\ParallelTestingBundle\\Controller\\DefaultController::checkAction',  '_route' => 'ab_parallel_testing_check',);
-            }
-
+        // ab_parallel_testing_charts
+        if ($pathinfo === '/charts') {
+            return array (  '_controller' => 'AB\\ParallelTestingBundle\\Controller\\DefaultController::chartsAction',  '_route' => 'ab_parallel_testing_charts',);
         }
 
         throw 0 < count($allow) ? new MethodNotAllowedException(array_unique($allow)) : new ResourceNotFoundException();

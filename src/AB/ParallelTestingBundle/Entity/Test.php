@@ -52,42 +52,42 @@ class Test
     /**
      * @var string
      *
-     * @ORM\Column(name="programOutput", type="text")
+     * @ORM\Column(name="programOutput", type="text", nullable=true)
      */
     private $programOutput;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="fullCommand", type="text")
+     * @ORM\Column(name="fullCommand", type="text", nullable=true)
      */
     private $fullCommand;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="processPID", type="integer")
+     * @ORM\Column(name="processPID", type="integer", nullable=true)
      */
     private $processPID;
 
     /**
      * @var decimal
      *
-     * @ORM\Column(name="systemRunTime", type="decimal", precision=7, scale=2)
+     * @ORM\Column(name="systemRunTime", type="decimal", precision=7, scale=2, nullable=true)
      */
     private $systemRunTime;
 
     /**
      * @var decimal
      *
-     * @ORM\Column(name="clockRunTime", type="decimal", precision=7, scale=2)
+     * @ORM\Column(name="clockRunTime", type="decimal", precision=7, scale=2, nullable=true)
      */
     private $clockRunTime;
 
     /**
      * @var decimal
      *
-     * @ORM\Column(name="cpuPercent", type="decimal", precision=7, scale=2)
+     * @ORM\Column(name="cpuPercent", type="decimal", precision=7, scale=2, nullable=true)
      */
     private $cpuPercent;
 
