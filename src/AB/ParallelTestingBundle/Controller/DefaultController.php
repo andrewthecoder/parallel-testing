@@ -88,7 +88,7 @@ class DefaultController extends Controller
 		return $response;
     }
 	
-	public function chartsAction() {
+	public function chartsAction($type) {
 		$repository = $this->getDoctrine()->getRepository('ABParallelTestingBundle:Test');
 		
 		$slowsequential = $repository->findAveragedResults('slowsequential');
@@ -96,84 +96,126 @@ class DefaultController extends Controller
 		$openmp = $repository->findAveragedResults('openmp');
 		$mpi = $repository->findAveragedResults('mpi');
 		
-        $ob = new Highchart();
-        $ob->chart->renderTo('linechart');  // The #id of the div where to render the chart
-        $ob->title->text('Parallel Programming vs Sequential Programming');
-		
-		$sequentialData = array();
-		foreach($sequential as $result) {
-			if(!is_null($result['averageTime']))
-				$sequentialData[] = array($result['upperLimit'], (float)$result['averageTime']);
-		}
-		$slowSequentialData = array();
-		foreach($slowsequential as $result) {
-			if(!is_null($result['averageTime']))
-				$slowSequentialData[] = array($result['upperLimit'], (float)$result['averageTime']);
-		}
-		$openmpData = array();
-		foreach($openmp as $result) {
-			if(!is_null($result['averageTime']))
-			$openmpData[] = array($result['upperLimit'], (float)$result['averageTime']);
-		}
-		$mpiData = array();
-		foreach($mpi as $result) {
-			if(!is_null($result['averageTime']))
-			$mpiData[] = array($result['upperLimit'], (float)$result['averageTime']);
-		}
-		
-		$xData = array(
-			array(
-				'title' => array(
-					'text'  => 'Totient Range Upper Limit',
-					'style' => array('color' => '#000000')
-				),
-				'opposite' => true
-			)
-		);
-		$ob->xAxis($xData);
-		
-		$yData = array(
-			array(
-				'labels' => array(
-					'formatter' => new Expr('function () { return this.value + " s" }')
-				),
-				'title' => array(
-					'text'  => 'Execution Time',
-					'style' => array('color' => '#000000')
+		if($type==1) {
+			
+			$ob = new Highchart();
+			$ob->chart->renderTo('linechart');  // The #id of the div where to render the chart
+			$ob->title->text('Comparison of Sequential Algorithms and Parallel Programming APIs with respect to efficiency on a 10 core CPU');
+			
+			$sequentialData = array();
+			foreach($sequential as $result) {
+				if(!is_null($result['averageTime']))
+					$sequentialData[] = array($result['upperLimit'], (float)$result['averageTime']);
+			}
+			$slowSequentialData = array();
+			foreach($slowsequential as $result) {
+				if(!is_null($result['averageTime']))
+					$slowSequentialData[] = array($result['upperLimit'], (float)$result['averageTime']);
+			}
+			$openmpData = array();
+			foreach($openmp as $result) {
+				if(!is_null($result['averageTime']))
+				$openmpData[] = array($result['upperLimit'], (float)$result['averageTime']);
+			}
+			$mpiData = array();
+			foreach($mpi as $result) {
+				if(!is_null($result['averageTime']))
+				$mpiData[] = array($result['upperLimit'], (float)$result['averageTime']);
+			}
+			
+			$xData = array(
+				array(
+					'title' => array(
+						'text'  => 'Totient Range Upper Limit',
+						'style' => array('color' => '#000000')
+					),
+					'opposite' => true
 				)
-			)
-		);
-		$ob->yAxis($yData);
-		
-		$formatter = new Expr('function () {
-                 return "<b>Execution Type:</b> "+this.series.name+"<br /><br /><b>Totient Range:</b> 1 to " + this.x + "<br /><b>Average Time:</b> " + this.y + " seconds";
-             }');
-		$ob->tooltip->formatter($formatter);
-		$ob->series(array(
-			array('type' => 'spline','color' => '#000000','name' => 'Bad Sequential', 'data' => $slowSequentialData),
-			array('type' => 'spline','color' => '#AA4643','name' => 'Good Sequential', 'data' => $sequentialData),
-			array('type' => 'spline','color' => '#89A54E','name' => 'OpenMP', 'data' => $openmpData),
-			array('type' => 'spline','color' => '#4572A7','name' => 'MPI', 'data' => $mpiData)
-		));
-		
-		
-		
-        /*$ob2 = new Highchart();
-        $ob2->chart->renderTo('linechart2');  // The #id of the div where to render the chart
-        $ob2->title->text('Parallel Programming API Comparison');
-		
-        $ob2->xAxis->title(array('text'  => "Range of integer values"));
-        $ob2->yAxis->title(array('text'  => "Execution time (s)"));
-		
-		$ob2->series(array(
-			array('type' => 'spline','name' => 'OpenMP', 'data' => $openmpData),
-			array('type' => 'spline','name' => 'MPI', 'data' => $mpiData)
-		));*/
-		
+			);
+			$ob->xAxis($xData);
+			
+			$yData = array(
+				array(
+					'labels' => array(
+						'formatter' => new Expr('function () { return this.value + " s" }')
+					),
+					'title' => array(
+						'text'  => 'Execution Time',
+						'style' => array('color' => '#000000')
+					)
+				)
+			);
+			$ob->yAxis($yData);
+			
+			$formatter = new Expr('function () {
+					 return "<b>Execution Type:</b> "+this.series.name+"<br /><br /><b>Totient Range:</b> 1 to " + this.x + "<br /><b>Average Time:</b> " + this.y + " seconds";
+				 }');
+			$ob->tooltip->formatter($formatter);
+			$ob->series(array(
+				array('type' => 'spline','color' => '#000000','name' => 'Bad Sequential', 'data' => $slowSequentialData),
+				array('type' => 'spline','color' => '#AA4643','name' => 'Good Sequential', 'data' => $sequentialData),
+				array('type' => 'spline','color' => '#89A54E','name' => 'OpenMP', 'data' => $openmpData),
+				array('type' => 'spline','color' => '#4572A7','name' => 'MPI', 'data' => $mpiData)
+			));
+			
+		} else {
+			$ob = new Highchart();
+			$ob->chart->renderTo('linechart');  // The #id of the div where to render the chart
+			$ob->title->text('OpenMP vs Sequential Speedup: 10 Threads');
+			
+			$sequentialData = array();
+			foreach($sequential as $result) {
+				if(!is_null($result['averageTime']))
+					$sequentialData[] = array($result['upperLimit'], (float)$result['averageTime']);
+			}
+			$openmpData = array();
+			foreach($openmp as $result) {
+				if(!is_null($result['averageTime']))
+				$openmpData[] = array($result['upperLimit'], (float)$result['averageTime']);
+			}
+			$idealSpeedupData = array();
+			foreach($sequential as $result) {
+				if(!is_null($result['averageTime']))
+					$idealSpeedupData[] = array($result['upperLimit'], (float)$result['averageTime']/10);
+			}
+			
+			$xData = array(
+				array(
+					'title' => array(
+						'text'  => 'Totient Range Upper Limit',
+						'style' => array('color' => '#000000')
+					),
+					'opposite' => true
+				)
+			);
+			$ob->xAxis($xData);
+			
+			$yData = array(
+				array(
+					'labels' => array(
+						'formatter' => new Expr('function () { return this.value + " s" }')
+					),
+					'title' => array(
+						'text'  => 'Execution Time',
+						'style' => array('color' => '#000000')
+					)
+				)
+			);
+			$ob->yAxis($yData);
+			
+			$formatter = new Expr('function () {
+					 return "<b>Execution Type:</b> "+this.series.name+"<br /><br /><b>Totient Range:</b> 1 to " + this.x + "<br /><b>Average Time:</b> " + this.y + " seconds";
+				 }');
+			$ob->tooltip->formatter($formatter);
+			$ob->series(array(
+				array('type' => 'spline','color' => '#AA4643','name' => 'Good Sequential', 'data' => $sequentialData),
+				array('type' => 'spline','color' => '#89A54E','name' => 'OpenMP', 'data' => $openmpData),
+				array('type' => 'spline','color' => '#4572A7','name' => 'Ideal Speedup (10x)', 'data' => $idealSpeedupData)
+			));
+		}
 		
 		return $this->render('ABParallelTestingBundle:Default:charts.html.twig', array(
-            'chart' => $ob /*,
-            'chart2' => $ob2*/
+            'chart' => $ob,
         ));
 	}
 	

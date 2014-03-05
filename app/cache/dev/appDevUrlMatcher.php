@@ -199,9 +199,14 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
             return array (  '_controller' => 'AB\\ParallelTestingBundle\\Controller\\DefaultController::updateAction',  '_route' => 'ab_parallel_testing_update',);
         }
 
-        // ab_parallel_testing_charts
-        if ($pathinfo === '/charts') {
-            return array (  '_controller' => 'AB\\ParallelTestingBundle\\Controller\\DefaultController::chartsAction',  '_route' => 'ab_parallel_testing_charts',);
+        // ab_parallel_testing_results
+        if ($pathinfo === '/results') {
+            return array (  '_controller' => 'AB\\ParallelTestingBundle\\Controller\\DefaultController::chartsAction',  'type' => 1,  '_route' => 'ab_parallel_testing_results',);
+        }
+
+        // ab_parallel_testing_speedup
+        if ($pathinfo === '/speedup') {
+            return array (  '_controller' => 'AB\\ParallelTestingBundle\\Controller\\DefaultController::chartsAction',  'type' => 2,  '_route' => 'ab_parallel_testing_speedup',);
         }
 
         throw 0 < count($allow) ? new MethodNotAllowedException(array_unique($allow)) : new ResourceNotFoundException();
