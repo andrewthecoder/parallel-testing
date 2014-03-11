@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -59,10 +59,9 @@ abstract class PhpReferenceCompatibility implements IteratorAggregate, ArrayAcce
     /**
      * Constructor
      *
-     * @param  array       $input
-     * @param  int         $flags
-     * @param  string      $iteratorClass
-     * @return ArrayObject
+     * @param array  $input
+     * @param int    $flags
+     * @param string $iteratorClass
      */
     public function __construct($input = array(), $flags = self::STD_PROP_LIST, $iteratorClass = 'ArrayIterator')
     {
@@ -76,7 +75,7 @@ abstract class PhpReferenceCompatibility implements IteratorAggregate, ArrayAcce
      * Returns whether the requested key exists
      *
      * @param  mixed $key
-     * @return boolean
+     * @return bool
      */
     public function __isset($key)
     {
@@ -279,7 +278,7 @@ abstract class PhpReferenceCompatibility implements IteratorAggregate, ArrayAcce
      * Returns whether the requested key exists
      *
      * @param  mixed $key
-     * @return boolean
+     * @return bool
      */
     public function offsetExists($key)
     {

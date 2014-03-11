@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -78,12 +78,11 @@ class Decoder
     /**
      * Constructor
      *
-     * @param string $source String source to decode
-     * @param int $decodeType How objects should be decoded -- see
+     * @param string $source     String source to decode
+     * @param int    $decodeType How objects should be decoded -- see
      * {@link Zend\Json\Json::TYPE_ARRAY} and {@link Zend\Json\Json::TYPE_OBJECT} for
      * valid values
      * @throws InvalidArgumentException
-     * @return void
      */
     protected function __construct($source, $decodeType)
     {
@@ -444,7 +443,7 @@ class Decoder
      * Solar Framework by Paul M. Jones
      *
      * @link   http://solarphp.com/
-     * @link   http://svn.solarphp.com/core/trunk/Solar/Json.php
+     * @link   https://github.com/solarphp/core/blob/master/Solar/Json.php
      * @param  string $chrs
      * @return string
      */

@@ -3,7 +3,7 @@ parameters:
     database_driver: pdo_mysql
     database_host: 127.0.0.1
     database_port: 3306
-    database_name: paralleltest
+    database_name: andrew
     database_user: andrew
     database_password: Cheesygit182!
     mailer_transport: smtp

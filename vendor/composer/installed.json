@@ -380,56 +380,6 @@
         ]
     },
     {
-        "name": "symfony/icu",
-        "version": "v1.2.0",
-        "version_normalized": "1.2.0.0",
-        "target-dir": "Symfony/Component/Icu",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/Icu.git",
-            "reference": "7299cd3d8d6602103d1ebff5d0a9917b7bc6de72"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Icu/zipball/7299cd3d8d6602103d1ebff5d0a9917b7bc6de72",
-            "reference": "7299cd3d8d6602103d1ebff5d0a9917b7bc6de72",
-            "shasum": ""
-        },
-        "require": {
-            "lib-icu": ">=4.4",
-            "php": ">=5.3.3",
-            "symfony/intl": "~2.3"
-        },
-        "time": "2013-06-03 18:32:58",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Icu\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Bernhard Schussek",
-                "email": "bschussek@gmail.com"
-            }
-        ],
-        "description": "Contains an excerpt of the ICU data and classes to load it.",
-        "homepage": "http://symfony.com",
-        "keywords": [
-            "icu",
-            "intl"
-        ]
-    },
-    {
         "name": "psr/log",
         "version": "1.0.0",
         "version_normalized": "1.0.0.0",
@@ -1604,98 +1554,6 @@
         ]
     },
     {
-        "name": "zendframework/zend-stdlib",
-        "version": "2.1.5",
-        "version_normalized": "2.1.5.0",
-        "target-dir": "Zend/Stdlib",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/zendframework/Component_ZendStdlib.git",
-            "reference": "1b21f3f9a206bd79da3c660b8c550b50d88f3a7e"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/1b21f3f9a206bd79da3c660b8c550b50d88f3a7e",
-            "reference": "1b21f3f9a206bd79da3c660b8c550b50d88f3a7e",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "suggest": {
-            "pecl-weakref": "Implementation of weak references for Stdlib\\CallbackHandler"
-        },
-        "time": "2013-04-15 11:43:47",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.1-dev",
-                "dev-develop": "2.2-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Zend\\Stdlib\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "keywords": [
-            "stdlib",
-            "zf2"
-        ]
-    },
-    {
-        "name": "zendframework/zend-json",
-        "version": "2.1.5",
-        "version_normalized": "2.1.5.0",
-        "target-dir": "Zend/Json",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/zendframework/Component_ZendJson.git",
-            "reference": "fa6956862ff0ea61559abf7c112c53a9c024701f"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/Component_ZendJson/zipball/fa6956862ff0ea61559abf7c112c53a9c024701f",
-            "reference": "fa6956862ff0ea61559abf7c112c53a9c024701f",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3",
-            "zendframework/zend-stdlib": "self.version"
-        },
-        "suggest": {
-            "zendframework/zend-server": "Zend\\Server component"
-        },
-        "time": "2013-04-16 21:18:18",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.1-dev",
-                "dev-develop": "2.2-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Zend\\Json\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "description": "provides convenience methods for serializing native PHP to JSON and decoding JSON to native PHP",
-        "keywords": [
-            "json",
-            "zf2"
-        ]
-    },
-    {
         "name": "ob/highcharts-bundle",
         "version": "1.0.1",
         "version_normalized": "1.0.1.0",
@@ -2049,6 +1907,148 @@
             "h5b",
             "html",
             "twig"
+        ]
+    },
+    {
+        "name": "symfony/icu",
+        "version": "v1.0.0",
+        "version_normalized": "1.0.0.0",
+        "target-dir": "Symfony/Component/Icu",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/Icu.git",
+            "reference": "cac3fdfb111adbe590155f491594636d45129783"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/Icu/zipball/cac3fdfb111adbe590155f491594636d45129783",
+            "reference": "cac3fdfb111adbe590155f491594636d45129783",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3",
+            "symfony/intl": "~2.3"
+        },
+        "time": "2013-06-03 18:32:07",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Icu\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Bernhard Schussek",
+                "email": "bschussek@gmail.com"
+            }
+        ],
+        "description": "Contains an excerpt of the ICU data and classes to load it.",
+        "homepage": "http://symfony.com",
+        "keywords": [
+            "icu",
+            "intl"
+        ]
+    },
+    {
+        "name": "zendframework/zend-stdlib",
+        "version": "2.1.6",
+        "version_normalized": "2.1.6.0",
+        "target-dir": "Zend/Stdlib",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zendframework/Component_ZendStdlib.git",
+            "reference": "e646729f2274f4552b6a92e38d8e458efe08ebc5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/e646729f2274f4552b6a92e38d8e458efe08ebc5",
+            "reference": "e646729f2274f4552b6a92e38d8e458efe08ebc5",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "suggest": {
+            "zendframework/zend-eventmanager": "To support aggregate hydrator usage",
+            "zendframework/zend-servicemanager": "To support hydrator plugin manager usage"
+        },
+        "time": "2014-01-04 13:00:28",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.2-dev",
+                "dev-develop": "2.3-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Zend\\Stdlib\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "keywords": [
+            "stdlib",
+            "zf2"
+        ]
+    },
+    {
+        "name": "zendframework/zend-json",
+        "version": "2.1.6",
+        "version_normalized": "2.1.6.0",
+        "target-dir": "Zend/Json",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zendframework/Component_ZendJson.git",
+            "reference": "dd8a8239a7c08c7449a6ea219da3e2369bd90d92"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/zendframework/Component_ZendJson/zipball/dd8a8239a7c08c7449a6ea219da3e2369bd90d92",
+            "reference": "dd8a8239a7c08c7449a6ea219da3e2369bd90d92",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3",
+            "zendframework/zend-stdlib": "self.version"
+        },
+        "suggest": {
+            "zendframework/zend-server": "Zend\\Server component"
+        },
+        "time": "2014-03-06 18:00:05",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.2-dev",
+                "dev-develop": "2.3-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Zend\\Json\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "description": "provides convenience methods for serializing native PHP to JSON and decoding JSON to native PHP",
+        "keywords": [
+            "json",
+            "zf2"
         ]
     }
 ]

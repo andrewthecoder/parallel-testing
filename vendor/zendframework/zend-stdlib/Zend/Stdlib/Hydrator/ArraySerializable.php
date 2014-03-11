@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -31,15 +31,16 @@ class ArraySerializable extends AbstractHydrator
             ));
         }
 
-        $self = $this;
         $data = $object->getArrayCopy();
-        array_walk($data, function (&$value, $name) use ($self, &$data) {
-            if (!$self->getFilter()->filter($name)) {
+
+        foreach ($data as $name => $value) {
+            if (!$this->getFilter()->filter($name)) {
                 unset($data[$name]);
-            } else {
-                $value = $self->extractValue($name, $value);
+                continue;
             }
-        });
+
+            $data[$name] = $this->extractValue($name, $value);
+        }
 
         return $data;
     }

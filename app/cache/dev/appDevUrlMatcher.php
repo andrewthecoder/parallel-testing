@@ -27,56 +27,6 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
         $context = $this->context;
         $request = $this->request;
 
-        if (0 === strpos($pathinfo, '/css/8b58cc4')) {
-            // _assetic_8b58cc4
-            if ($pathinfo === '/css/8b58cc4.css') {
-                return array (  '_controller' => 'assetic.controller:render',  'name' => '8b58cc4',  'pos' => NULL,  '_format' => 'css',  '_route' => '_assetic_8b58cc4',);
-            }
-
-            if (0 === strpos($pathinfo, '/css/8b58cc4_')) {
-                // _assetic_8b58cc4_0
-                if ($pathinfo === '/css/8b58cc4_normalize_1.css') {
-                    return array (  '_controller' => 'assetic.controller:render',  'name' => '8b58cc4',  'pos' => 0,  '_format' => 'css',  '_route' => '_assetic_8b58cc4_0',);
-                }
-
-                // _assetic_8b58cc4_1
-                if ($pathinfo === '/css/8b58cc4_main_2.css') {
-                    return array (  '_controller' => 'assetic.controller:render',  'name' => '8b58cc4',  'pos' => 1,  '_format' => 'css',  '_route' => '_assetic_8b58cc4_1',);
-                }
-
-            }
-
-        }
-
-        if (0 === strpos($pathinfo, '/js')) {
-            if (0 === strpos($pathinfo, '/js/10fc496')) {
-                // _assetic_10fc496
-                if ($pathinfo === '/js/10fc496.js') {
-                    return array (  '_controller' => 'assetic.controller:render',  'name' => '10fc496',  'pos' => NULL,  '_format' => 'js',  '_route' => '_assetic_10fc496',);
-                }
-
-                // _assetic_10fc496_0
-                if ($pathinfo === '/js/10fc496_modernizr_1.js') {
-                    return array (  '_controller' => 'assetic.controller:render',  'name' => '10fc496',  'pos' => 0,  '_format' => 'js',  '_route' => '_assetic_10fc496_0',);
-                }
-
-            }
-
-            if (0 === strpos($pathinfo, '/js/9900a82')) {
-                // _assetic_9900a82
-                if ($pathinfo === '/js/9900a82.js') {
-                    return array (  '_controller' => 'assetic.controller:render',  'name' => '9900a82',  'pos' => NULL,  '_format' => 'js',  '_route' => '_assetic_9900a82',);
-                }
-
-                // _assetic_9900a82_0
-                if ($pathinfo === '/js/9900a82_jquery.min_1.js') {
-                    return array (  '_controller' => 'assetic.controller:render',  'name' => '9900a82',  'pos' => 0,  '_format' => 'js',  '_route' => '_assetic_9900a82_0',);
-                }
-
-            }
-
-        }
-
         if (0 === strpos($pathinfo, '/_')) {
             // _wdt
             if (0 === strpos($pathinfo, '/_wdt') && preg_match('#^/_wdt/(?P<token>[^/]++)$#s', $pathinfo, $matches)) {
@@ -199,14 +149,9 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
             return array (  '_controller' => 'AB\\ParallelTestingBundle\\Controller\\DefaultController::updateAction',  '_route' => 'ab_parallel_testing_update',);
         }
 
-        // ab_parallel_testing_results
-        if ($pathinfo === '/results') {
-            return array (  '_controller' => 'AB\\ParallelTestingBundle\\Controller\\DefaultController::chartsAction',  'type' => 1,  '_route' => 'ab_parallel_testing_results',);
-        }
-
-        // ab_parallel_testing_speedup
-        if ($pathinfo === '/speedup') {
-            return array (  '_controller' => 'AB\\ParallelTestingBundle\\Controller\\DefaultController::chartsAction',  'type' => 2,  '_route' => 'ab_parallel_testing_speedup',);
+        // ab_parallel_testing_charts
+        if (0 === strpos($pathinfo, '/charts') && preg_match('#^/charts/(?P<type>[^/]++)$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'ab_parallel_testing_charts')), array (  '_controller' => 'AB\\ParallelTestingBundle\\Controller\\DefaultController::chartsAction',));
         }
 
         throw 0 < count($allow) ? new MethodNotAllowedException(array_unique($allow)) : new ResourceNotFoundException();

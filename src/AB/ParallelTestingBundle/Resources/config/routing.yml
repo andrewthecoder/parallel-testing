@@ -6,10 +6,6 @@ ab_parallel_testing_update:
     pattern:  /update
     defaults: { _controller: ABParallelTestingBundle:Default:update }
 
-ab_parallel_testing_results:
-    pattern:  /results
-    defaults: { _controller: ABParallelTestingBundle:Default:charts, type: 1 }
-
-ab_parallel_testing_speedup:
-    pattern:  /speedup
-    defaults: { _controller: ABParallelTestingBundle:Default:charts, type: 2 }
+ab_parallel_testing_charts:
+    pattern:  /charts/{type}
+    defaults: { _controller: ABParallelTestingBundle:Default:charts }

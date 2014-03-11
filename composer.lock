@@ -1515,21 +1515,20 @@
         },
         {
             "name": "symfony/icu",
-            "version": "v1.2.0",
+            "version": "v1.0.0",
             "target-dir": "Symfony/Component/Icu",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Icu.git",
-                "reference": "7299cd3d8d6602103d1ebff5d0a9917b7bc6de72"
+                "reference": "cac3fdfb111adbe590155f491594636d45129783"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Icu/zipball/7299cd3d8d6602103d1ebff5d0a9917b7bc6de72",
-                "reference": "7299cd3d8d6602103d1ebff5d0a9917b7bc6de72",
+                "url": "https://api.github.com/repos/symfony/Icu/zipball/cac3fdfb111adbe590155f491594636d45129783",
+                "reference": "cac3fdfb111adbe590155f491594636d45129783",
                 "shasum": ""
             },
             "require": {
-                "lib-icu": ">=4.4",
                 "php": ">=5.3.3",
                 "symfony/intl": "~2.3"
             },
@@ -1559,7 +1558,7 @@
                 "icu",
                 "intl"
             ],
-            "time": "2013-06-03 18:32:58"
+            "time": "2013-06-03 18:32:07"
         },
         {
             "name": "symfony/monolog-bundle",
@@ -1903,17 +1902,17 @@
         },
         {
             "name": "zendframework/zend-json",
-            "version": "2.1.5",
+            "version": "2.1.6",
             "target-dir": "Zend/Json",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/Component_ZendJson.git",
-                "reference": "fa6956862ff0ea61559abf7c112c53a9c024701f"
+                "reference": "dd8a8239a7c08c7449a6ea219da3e2369bd90d92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/Component_ZendJson/zipball/fa6956862ff0ea61559abf7c112c53a9c024701f",
-                "reference": "fa6956862ff0ea61559abf7c112c53a9c024701f",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendJson/zipball/dd8a8239a7c08c7449a6ea219da3e2369bd90d92",
+                "reference": "dd8a8239a7c08c7449a6ea219da3e2369bd90d92",
                 "shasum": ""
             },
             "require": {
@@ -1926,8 +1925,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev",
-                    "dev-develop": "2.2-dev"
+                    "dev-master": "2.2-dev",
+                    "dev-develop": "2.3-dev"
                 }
             },
             "autoload": {
@@ -1944,34 +1943,35 @@
                 "json",
                 "zf2"
             ],
-            "time": "2013-04-16 21:18:18"
+            "time": "2014-03-06 18:00:05"
         },
         {
             "name": "zendframework/zend-stdlib",
-            "version": "2.1.5",
+            "version": "2.1.6",
             "target-dir": "Zend/Stdlib",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/Component_ZendStdlib.git",
-                "reference": "1b21f3f9a206bd79da3c660b8c550b50d88f3a7e"
+                "reference": "e646729f2274f4552b6a92e38d8e458efe08ebc5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/1b21f3f9a206bd79da3c660b8c550b50d88f3a7e",
-                "reference": "1b21f3f9a206bd79da3c660b8c550b50d88f3a7e",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/e646729f2274f4552b6a92e38d8e458efe08ebc5",
+                "reference": "e646729f2274f4552b6a92e38d8e458efe08ebc5",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "suggest": {
-                "pecl-weakref": "Implementation of weak references for Stdlib\\CallbackHandler"
+                "zendframework/zend-eventmanager": "To support aggregate hydrator usage",
+                "zendframework/zend-servicemanager": "To support hydrator plugin manager usage"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev",
-                    "dev-develop": "2.2-dev"
+                    "dev-master": "2.2-dev",
+                    "dev-develop": "2.3-dev"
                 }
             },
             "autoload": {
@@ -1987,7 +1987,7 @@
                 "stdlib",
                 "zf2"
             ],
-            "time": "2013-04-15 11:43:47"
+            "time": "2014-01-04 13:00:28"
         }
     ],
     "packages-dev": [
