@@ -3001,7 +3001,7 @@ class appDevDebugProjectContainer extends Container
             'kernel.root_dir' => '/home/andrew/parallel/app',
             'kernel.environment' => 'dev',
             'kernel.debug' => true,
-            'kernel.name' => 'ap_',
+            'kernel.name' => 'app',
             'kernel.cache_dir' => '/home/andrew/parallel/app/cache/dev',
             'kernel.logs_dir' => '/home/andrew/parallel/app/logs',
             'kernel.bundles' => array(
@@ -3366,8 +3366,8 @@ class appDevDebugProjectContainer extends Container
             ),
             'assetic.java.bin' => '/usr/bin/java',
             'assetic.node.bin' => '/usr/bin/node',
-            'assetic.ruby.bin' => '/usr/local/rvm/rubies/ruby-2.1.1/bin/ruby',
-            'assetic.sass.bin' => '/usr/local/rvm/gems/ruby-2.1.1/bin/sass',
+            'assetic.ruby.bin' => '/usr/bin/ruby',
+            'assetic.sass.bin' => '/usr/bin/sass',
             'assetic.twig_extension.functions' => array(
 
             ),

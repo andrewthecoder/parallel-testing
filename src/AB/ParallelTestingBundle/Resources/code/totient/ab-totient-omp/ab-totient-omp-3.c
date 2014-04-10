@@ -1,8 +1,9 @@
 // Distributed and parallel technologies, Andrew Beveridge, 03/03/2014
-// To Compile:		gcc -Wall -O -o ab-totient-sequential ab-totient-sequential.c
-// To Run / Time:	/usr/bin/time -v ./ab-totient-sequential range_start range_end
+// To Compile:		gcc -Wall -O -o ab-totient-omp -fopenmp ab-totient-omp.c
+// To Run / Time:	/usr/bin/time -v ./ab-totient-omp range_start range_end
 
 #include <stdio.h>
+#include <omp.h>
 
 /* 	When input is a prime number, the totient is simply the prime number - 1. Totient is always even (except for 1).
 	If n is a positive integer, then φ(n) is the number of integers k in the range 1 ≤ k ≤ n for which gcd(n, k) = 1  */
@@ -51,6 +52,8 @@ int main(int argc, char ** argv) {
 		result = 1.0;
 		lower = 2;
 	}
+	
+	#pragma omp parallel for default(shared) private(i) schedule(auto) reduction(+:result) num_threads(3)
 
 	// Sum all totients in the specified range
 	for (i = lower; i <= upper; i++) {
