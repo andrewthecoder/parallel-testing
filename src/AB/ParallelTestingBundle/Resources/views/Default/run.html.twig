@@ -72,6 +72,10 @@
             padding: 0;
         }
 
+        #updateStatus {
+            height: 50px;
+        }
+        
         #loadingSpinner {
             margin: 0 auto;
             height: 50px;
@@ -91,26 +95,28 @@
 <div id="infoBoxes">
     <div id="box_1">
         <h3>System</h3>
-        Load Average: 
+        1-minute Load Average: 
         <div id="systemLoadAverage"></div>
     </div>
     <div id="box_2">
         <h3>Test</h3>
-        Status: 
+        <div id="testInfo"></div>
         <div id="testStatus"></div>
+        <div id="pidOfOutput"></div>
     </div>
     <div id="box_3">
         <h3>Queue</h3>
-        <div id="queueCompleted"></div>
+        <div id="queueInfo"></div>
     </div>
     <div id="box_4">
-        <h3>Update</h3>
-        <img src="http://www.southwestholidays.co.uk/images/ajax-loader.gif" id="loadingSpinner" />
-        <div id="updateStatus">Loaded</div>
+        <h3>Run State</h3>
+        <div id="updateStatus">Stopped</div>
+        <button id="startButton">Start</button>
+        <button id="stopButton">Stop</button>
     </div>
     <div id="box_5">
         <h3>Errors</h3>
-        <div id="error"></div>
+        <div id="errorLog"></div>
     </div>
 </div><div id="scrollingOutput"></div>
 {% endblock %}
@@ -121,65 +127,104 @@
             var queueLengthStart = {{ queueLength }};
             var queueCompleted = 0;
             var mostRecentMessage = '';
+            var stopRunning = false;
 
+            $( "#startButton" ).click(function() {
+                stopRunning = false;
+                update();
+            });
+            $( "#stopButton" ).click(function() {
+                stopRunning = true;
+                $('#updateStatus').html('Stopped');
+            });
+            
 			function update() {
-			   $.ajax( {
-					type: 'GET',
-					url: 'update',
-					dataType: 'json',
+                if(stopRunning == true) {
+                    console.log("Cancelling update because stopRunning is true");
+                    return;
+                }
+                
+                $.ajax( {
+                    type: 'GET',
+                    url: 'update',
+                    dataType: 'json',
                     beforeSend: function() {
-                        // Show loadng spinner for the split second while we do update the results with ajax
-                        $('#loadingSpinner').show();
-                        $('#updateStatus').hide();
+                        // Show loading spinner for the split second while we do update the results with ajax
+                        $('#updateStatus').html('<img src="http://www.southwestholidays.co.uk/images/ajax-loader.gif" id="loadingSpinner" />');
                     } ,
-					success: function(result){
-                        // Clear ajax loading spinner
-                        $('#loadingSpinner').hide();
-                        $('#updateStatus').show();
-
+                    success: function(result){
+                        // Hide ajax loading spinner so we know we're between updates
+                        $('#updateStatus').html('Loaded');
+                
                         $('#systemLoadAverage').text(result.loadAverage);
                         
                         queueCompleted = queueLengthStart - result.queueLength;
-                        $('#queueCompleted').html('Queue is '+result.queueStatus+'.<br /><br />Completed: '+queueCompleted+' out of ' + queueLengthStart);
-
-                        // Add message to scroller if isn't identical to whatever is already there
-                        if(result.message != mostRecentMessage) {
-                            mostRecentMessage = result.message;
-                            $('#bottomSpacer').remove();
-                            $('#scrollingOutput').append( "<pre>"+ mostRecentMessage +"</pre><div id='bottomSpacer'></div>" );
-                            $('#scrollingOutput').scrollTop($('#scrollingOutput').prop("scrollHeight"));
-                        }
+                        $('#queueInfo').html('Queue is '+result.queueStatus+'.<br /><br />' +
+                                'Completed: '+queueCompleted+' out of ' + queueLengthStart);
                         
-						if (result.queueStatus == 'running') {
-
-                            // result.test possible values: 'systemNotReady', 'prepareTestFailed', 'startTestFailed', 'started', 'running', 'finished'
-                            $('#testStatus').text(result.testStatus);
-                            
-                            if (result.testStatus == 'finished') {
-                                // If no test is running because we just finished one, update immediately to keep things quick
-                                update();
-                            } else if (result.test == 'finished') {
+                        if (result.queueStatus == 'running') {
+                            // result.testStatus possible values: 'systemNotReady', 'prepareTestFailed', 'startTestFailed', 'started', 'running', 'finished'
+                            if (result.testStatus == 'systemNotReady') {
+                                $('#errorLog').text(result.message);
+                                setTimeout(function() { update(); }, 5000);
                                 
-                            
-                            } else {
+                            } else if (result.testStatus == 'prepareTestFailed') {
+                                $('#errorLog').text(result.message);
+                                setTimeout(function() { update(); }, 5000);
+                                
+                            } else if (result.testStatus == 'startTestFailed') {
+                                $('#errorLog').text(result.message);
+                                setTimeout(function() { update(); }, 5000);
+                                
+                            } else if (result.testStatus == 'started') {
+                                // New test just started, update the test status box
+                                $('#testStatus').text("Started");
+                                // Add other useful info about test
+                                $('#testInfo').text("ID: "+result.testID);
+                                
                                 // Otherwise delay 200ms between polls so we don't affect the results by generating apache load
                                 setTimeout(function() { update(); }, 200);
+                                
+                            } else if (result.testStatus == 'running') {
+                                // New test just started, update the test status box
+                                $('#testStatus').text("Running");
+                                // Show output from pidof in test box
+                                $('#pidOfOutput').text(result.message);
+                                
+                                // Otherwise delay 200ms between polls so we don't affect the results by generating apache load
+                                setTimeout(function() { update(); }, 200);
+                                
+                            } else if (result.testStatus == 'finished') {
+                                // Clear pidof
+                                $('#pidOfOutput').text("");
+                                // Set visual test status
+                                $('#testStatus').text("Finished");
+                                
+                                // Add message to scroller if isn't identical to whatever is already there
+                                if(result.message != mostRecentMessage) {
+                                    mostRecentMessage = result.message;
+                                    $('#bottomSpacer').remove();
+                                    var scrollingOutput = $('#scrollingOutput');
+                                    scrollingOutput.append( "<pre>"+ mostRecentMessage +"</pre><div id='bottomSpacer'></div>" )
+                                            .scrollTop(scrollingOutput.prop("scrollHeight"));
+                                }
+                                
+                                // Since no test is running because we just finished one, update immediately to keep things quick
+                                update();
                             }
-						} else {
+                        } else {
                             // Otherwise delay 5 seconds between polls. If queue isn't running we have probably either finished or errored
                             setTimeout(function() { update(); }, 5000);
                         }
                         
-					},
-					error: function(xhr, ajaxOptions, thrownError){
+                    },
+                    error: function(xhr, ajaxOptions, thrownError){
                         // Something went wrong. Hopefully it will be fixed in 5 seconds
                         console.log('Error: ' + thrownError);
                         setTimeout(function() { update(); }, 3000);
                     }
 	    	   });
 			}
-
-            update();
 		});
 	</script>
 {% endblock %}

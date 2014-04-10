@@ -150,7 +150,9 @@ class DefaultController extends Controller
 			$testStatus = $this->checkTestFinished( $runningTest->getId() );
 			if( $testStatus === true ) {
                 $currentTestStatus = 'finished';
-                $programOutputText = trim( $runningTest->getProgramOutput() );
+                $programOutputText = preg_replace( '|Sum of Totients .+? is 0[ \n\r]*|', '', $runningTest->getProgramOutput() );
+                $programOutputText = trim( $programOutputText );
+                
 				$updateOutput = "Program output: '{$programOutputText}'\nTest {$runningTest->getId()} complete: Calculated totients from {$runningTest->getLowerLimit()}-{$runningTest->getUpperLimit()} using {$runningTest->getCores()} cores in {$runningTest->getClockRunTime()} seconds.\n\n";
 			} else {
                 $currentTestStatus = 'running';
