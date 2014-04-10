@@ -43,6 +43,13 @@ class Test
     private $upperLimit;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="cores", type="integer")
+     */
+    private $cores;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="status", type="string", length=255)
@@ -55,6 +62,13 @@ class Test
      * @ORM\Column(name="programOutput", type="text", nullable=true)
      */
     private $programOutput;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="timeOutput", type="text", nullable=true)
+     */
+    private $timeOutput;
 
     /**
      * @var string
@@ -171,6 +185,30 @@ class Test
         return $this->upperLimit;
     }
 
+
+    /**
+     * Set cores
+     *
+     * @param integer $cores
+     * @return Test
+     */
+    public function setCores($cores)
+    {
+        $this->cores = $cores;
+
+        return $this;
+    }
+
+    /**
+     * Get cores
+     *
+     * @return integer 
+     */
+    public function getCores()
+    {
+        return $this->cores;
+    }
+
     /**
      * Set processPID
      *
@@ -238,6 +276,29 @@ class Test
     public function getProgramOutput()
     {
         return $this->programOutput;
+    }
+
+    /**
+     * Set timeOutput
+     *
+     * @param string $timeOutput
+     * @return Test
+     */
+    public function setTimeOutput($timeOutput)
+    {
+        $this->timeOutput = $timeOutput;
+
+        return $this;
+    }
+
+    /**
+     * Get timeOutput
+     *
+     * @return string 
+     */
+    public function getTimeOutput()
+    {
+        return $this->timeOutput;
     }
 
     /**

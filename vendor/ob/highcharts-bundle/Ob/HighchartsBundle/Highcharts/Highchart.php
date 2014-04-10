@@ -74,7 +74,7 @@ class Highchart
      *
      * @return string
      */
-    public function render($engine = 'jquery')
+    public function render($engine = 'jquery', $name = 'chart')
     {
         $chartJS = "";
 
@@ -84,7 +84,7 @@ class Highchart
         } elseif($engine == 'jquery') {
             $chartJS = "$(function(){";
         }
-        $chartJS .= "\n    var " . (isset($this->chart->renderTo) ? $this->chart->renderTo : 'chart') . " = new Highcharts.Chart({\n";
+        $chartJS .= "\n    var " . (isset($this->chart->renderTo) ? $this->chart->renderTo : $name) . " = new Highcharts.Chart({\n";
 
         // Chart Option
         if (get_object_vars($this->chart->chart)) {

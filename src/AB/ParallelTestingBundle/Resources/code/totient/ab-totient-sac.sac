@@ -1,0 +1,69 @@
+// Distributed and parallel technologies, Andrew Beveridge, 03/03/2014
+// To Compile:		sac2c -o ab-totient-sac ab-totient-sac.sac
+// To Run / Time:	/usr/bin/time -v ./ab-totient-sac range_start range_end -mt cores
+
+use StdIO: all;
+use Array: all;
+use CommandLine: all;
+
+// Function exists already in Math, but seems to be really slow in comparison to this?
+inline double[] fmod(double[] a, double[] b)
+{
+    k = toi(a / b);
+    s = a - tod(k) * b;
+    return(s);
+}
+
+// 	When input is a prime number, the totient is simply the prime number - 1. Totient is always even (except for 1).
+//	If n is a positive integer, then φ(n) is the number of integers k in the range 1 ≤ k ≤ n for which gcd(n, k) = 1
+inline double getTotient (double number) {
+	result = number;
+
+    // Check every prime number below the square root for divisibility
+    if( fmod(number, 2d) == 0d ){
+        result -= result / 2d;
+        do 
+            number /= 2d;
+        while( fmod(number, 2d) == 0d );
+    }
+
+    // Primitive replacement for a list of primes, looping through every odd number
+	for(prime = 3d; prime * prime <= number; prime += 2d){
+        if( fmod(number, prime) == 0d ){
+            result -= result / prime;
+            do 
+                number /= prime;
+            while( fmod(number, prime) == 0d );
+        }
+    }
+	
+    // Last common factor 
+    if(number > 1d) 
+        result -= result / number;
+
+    // Return the result. 
+    return( result ); 
+}
+
+// Main method.
+int main() {
+	// Load inputs
+    lower = String::toi( argv(1) );
+    upper = String::toi( argv(2) );
+
+	// Sum all totients in the specified range
+	result = with {
+        ( [0] <= iv <= [upper - lower]) : getTotient( tod(iv[0] + lower) );
+    } : fold(+, 0d);
+	
+    //result = 0d;
+	//for (i = lower; i <= upper; i++) {
+	//	result = result + getTotient( tod(i) );
+	//}
+	
+	// Print the result
+	printf("Sum of Totients between [%d..%d] is %.f \n", lower, upper, result);
+	
+	// A-OK!
+	return(0);
+}

@@ -1,0 +1,185 @@
+{% block body_container_header %}
+    <style type='text/css'>
+        html, body, #container {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+        h2 {
+            margin: 0;
+            padding: 0;
+            height: 5%;
+            min-height: 30px;
+        }
+        
+        #infoBoxes {
+            position: relative;
+            width: 100%;
+            height: 30%;
+            min-height: 180px;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        #infoBoxes > div {
+            float: left;
+            position: relative;
+            height: 100%;
+            width: 18%;
+            margin: 0;
+            padding-right: 1%;
+            padding-left: 1%;
+        }
+        
+        #infoBoxes > #box_1 {
+            background-color: #F1E3FF;
+        }
+        #infoBoxes > #box_2 {
+            background-color: #E3F1FF;
+        }
+        #infoBoxes > #box_3 {
+            background-color: #ECFFE3;
+        }
+        #infoBoxes > #box_4 {
+            background-color: #FFF4E3;
+        }
+        #infoBoxes > #box_5 {
+            background-color: #FFE3E3;
+        }
+        
+        #scrollingOutput {
+            position: relative;
+            width: 96%;
+            
+            height: 50%;
+            overflow-y: scroll;
+            
+            margin: 0;
+            margin-top: 20px;
+            padding-left: 2%;
+            padding-right: 2%;
+            background-color: #F7F7F7;
+        }
+        
+        div#bottomSpacer {
+            height: 30px;
+        }
+        
+        pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        #loadingSpinner {
+            margin: 0 auto;
+            height: 50px;
+            width: 50px;
+        }
+    </style>
+    <h2>Parallel Technology Test Run</h2>
+{% endblock %}
+{% block body_container_main %}
+{% if debugMessage %}
+    <div id="debug">
+        <pre>
+            {{ debugMessage }}
+        </pre>
+    </div>
+{% endif %}
+<div id="infoBoxes">
+    <div id="box_1">
+        <h3>System</h3>
+        Load Average: 
+        <div id="systemLoadAverage"></div>
+    </div>
+    <div id="box_2">
+        <h3>Test</h3>
+        Status: 
+        <div id="testStatus"></div>
+    </div>
+    <div id="box_3">
+        <h3>Queue</h3>
+        <div id="queueCompleted"></div>
+    </div>
+    <div id="box_4">
+        <h3>Update</h3>
+        <img src="http://www.southwestholidays.co.uk/images/ajax-loader.gif" id="loadingSpinner" />
+        <div id="updateStatus">Loaded</div>
+    </div>
+    <div id="box_5">
+        <h3>Errors</h3>
+        <div id="error"></div>
+    </div>
+</div><div id="scrollingOutput"></div>
+{% endblock %}
+{% block body_js %}
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+            var queueLengthStart = {{ queueLength }};
+            var queueCompleted = 0;
+            var mostRecentMessage = '';
+
+			function update() {
+			   $.ajax( {
+					type: 'GET',
+					url: 'update',
+					dataType: 'json',
+                    beforeSend: function() {
+                        // Show loadng spinner for the split second while we do update the results with ajax
+                        $('#loadingSpinner').show();
+                        $('#updateStatus').hide();
+                    } ,
+					success: function(result){
+                        // Clear ajax loading spinner
+                        $('#loadingSpinner').hide();
+                        $('#updateStatus').show();
+
+                        $('#systemLoadAverage').text(result.loadAverage);
+                        
+                        queueCompleted = queueLengthStart - result.queueLength;
+                        $('#queueCompleted').html('Queue is '+result.queueStatus+'.<br /><br />Completed: '+queueCompleted+' out of ' + queueLengthStart);
+
+                        // Add message to scroller if isn't identical to whatever is already there
+                        if(result.message != mostRecentMessage) {
+                            mostRecentMessage = result.message;
+                            $('#bottomSpacer').remove();
+                            $('#scrollingOutput').append( "<pre>"+ mostRecentMessage +"</pre><div id='bottomSpacer'></div>" );
+                            $('#scrollingOutput').scrollTop($('#scrollingOutput').prop("scrollHeight"));
+                        }
+                        
+						if (result.queueStatus == 'running') {
+
+                            // result.test possible values: 'systemNotReady', 'prepareTestFailed', 'startTestFailed', 'started', 'running', 'finished'
+                            $('#testStatus').text(result.testStatus);
+                            
+                            if (result.testStatus == 'finished') {
+                                // If no test is running because we just finished one, update immediately to keep things quick
+                                update();
+                            } else if (result.test == 'finished') {
+                                
+                            
+                            } else {
+                                // Otherwise delay 200ms between polls so we don't affect the results by generating apache load
+                                setTimeout(function() { update(); }, 200);
+                            }
+						} else {
+                            // Otherwise delay 5 seconds between polls. If queue isn't running we have probably either finished or errored
+                            setTimeout(function() { update(); }, 5000);
+                        }
+                        
+					},
+					error: function(xhr, ajaxOptions, thrownError){
+                        // Something went wrong. Hopefully it will be fixed in 5 seconds
+                        console.log('Error: ' + thrownError);
+                        setTimeout(function() { update(); }, 3000);
+                    }
+	    	   });
+			}
+
+            update();
+		});
+	</script>
+{% endblock %}

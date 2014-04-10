@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityRepository;
 class TestRepository extends EntityRepository
 {
 
-	public function findAveragedResults($type)
+	public function findMeanResults($type, $cores)
     {
 		return $this->getEntityManager()
 			->createQueryBuilder()
@@ -23,10 +23,86 @@ class TestRepository extends EntityRepository
 						AVG(t.cpuPercent) AS averageCPU')
 			->from('ABParallelTestingBundle:Test', 't')
 			->where('t.type = :type')
+			->andwhere('t.cores = :cores')
 			->setParameter('type', $type)
+			->setParameter('cores', $cores)
 			->groupBy('t.type, t.upperLimit')
 			->getQuery()
 			->getResult();
     }
-	
+
+    public function findMedianResults($type, $cores)
+    {
+        $resultsArray = array();
+
+        foreach($this->findUpperLimits($type,$cores) as $upperLimit) {
+            $clockRunTimes = array();
+            $systemRunTimes = array();
+            $cpuPercents = array();
+
+            $resultsToAverage = $this->getEntityManager()
+                ->createQueryBuilder()
+                ->select('t.clockRunTime, t.systemRunTime, t.cpuPercent')
+                ->from('ABParallelTestingBundle:Test', 't')
+                ->where('t.type = :type')
+                ->andwhere('t.cores = :cores')
+                ->andwhere('t.upperLimit = :upperLimit')
+                ->setParameter('type', $type)
+                ->setParameter('cores', $cores)
+                ->setParameter('upperLimit', $upperLimit)
+                ->getQuery()
+                ->getResult();
+            
+            foreach($resultsToAverage as $resultArray) {
+                $clockRunTimes[] = $resultArray['clockRunTime'];
+                $systemRunTimes[] = $resultArray['systemRunTime'];
+                $cpuPercents[] = $resultArray['cpuPercent'];
+            }
+            
+            $mid = (int)(count($clockRunTimes) / 2);
+            
+            rsort($clockRunTimes);
+            $clockRunTimeMedian = ($mid % 2 != 0) ? $clockRunTimes[$mid] : (($clockRunTimes[$mid-1]) + $clockRunTimes[$mid]) / 2;
+
+            rsort($systemRunTimes);
+            $systemRunTimeMedian = ($mid % 2 != 0) ? $systemRunTimes[$mid] : (($systemRunTimes[$mid-1]) + $systemRunTimes[$mid]) / 2;
+
+            rsort($cpuPercents);
+            $cpuPercentMedian = ($mid % 2 != 0) ? $cpuPercents[$mid] : (($cpuPercents[$mid-1]) + $cpuPercents[$mid]) / 2;
+
+            $resultsArray[] = array (
+                'type' => $type,
+                'cores' => $cores,
+                'upperLimit' => $upperLimit,
+                'clockRunTimeMedian' => $clockRunTimeMedian,
+                'systemRunTimeMedian' => $systemRunTimeMedian,
+                'cpuPercentMedian' => $cpuPercentMedian,
+            );
+        } 
+        
+        return $resultsArray;
+    }
+
+    public function findUpperLimits($type, $cores)
+    {
+        $results = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('t.upperLimit')
+            ->distinct(true)
+            ->from('ABParallelTestingBundle:Test', 't')
+            ->where('t.type = :type')
+            ->andwhere('t.cores = :cores')
+            ->setParameter('type', $type)
+            ->setParameter('cores', $cores)
+            ->orderBy('t.upperLimit')
+            ->getQuery()
+            ->getResult();
+
+        $upperLimits = array();
+        foreach($results as $result) {
+            $upperLimits[] = $result['upperLimit'];
+        }
+        return $upperLimits;
+    }
+
 }

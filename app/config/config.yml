@@ -30,10 +30,10 @@ twig:
     strict_variables: "%kernel.debug%"
 
 # Assetic Configuration
-#assetic:
-#    debug:          "%kernel.debug%"
-#    use_controller: false
-#    bundles:        ["OryzoneBoilerplateBundle"]
+assetic:
+    debug:          "%kernel.debug%"
+    use_controller: false
+    bundles:        ["OryzoneBoilerplateBundle"]
     #java: /usr/bin/java
 #    filters:
 #        cssrewrite: ~

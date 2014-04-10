@@ -1,25 +1,30 @@
-{% block head_title %}Parallel Testing{% endblock %}
+{% extends "OryzoneBoilerplateBundle::html5.html.twig" %}
+
+{% block head_title %}Parallel Technology Comparison{% endblock %}
 
 {% block body_container_header %}
 	<style type='text/css'>
 		html, body, #container {
-			height: 100%;
 			width: 100%;
 			margin: 0;
 			padding: 0;
 			position: relative;
-			overflow: hidden;
-			scroll: none;
 		}
 		#container > div {
-			height: 90%;
 		}
 	</style>
-    <h1>Parallel Testing</h1>
+    <h1>Parallel Technology Comparison</h1>
 {% endblock %}
 
 {% block body_container_main %}
-	<div id="linechart" style="position: relative; min-width: 400px; height: 100%; margin: 0 auto"></div>
+    <h3>Comparison of Sequential Algorithms and Parallel Programming APIs</h3>
+
+    {% for currentChart in allChartsToDisplay %}
+        
+        <div id="chart_{{ currentChart.type }}_{{ currentChart.numberOfCores }}" style="position: relative; height: 800px; min-width: 400px; margin: 0 auto"></div>
+    
+    {% endfor %}
+    
 {% endblock %}
 
 {% block body_container_footer %}
@@ -31,6 +36,13 @@
 	<script src="{{ asset('bundles/obhighcharts/js/highcharts/highcharts.js') }}"></script>
 	<script src="{{ asset('bundles/obhighcharts/js/highcharts/modules/exporting.js') }}"></script>
 	<script type="text/javascript">
-	{{ chart(chart) }}
+        $(function(){
+            {% for currentChart in allChartsToDisplay %}
+            
+                {% set variableName = 'chart_' ~ currentChart.type ~ '_' ~ currentChart.numberOfCores %}
+                {{ chart(currentChart, false, variableName) }}
+            
+            {% endfor %}
+        });
 	</script>
 {% endblock %}

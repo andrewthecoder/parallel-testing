@@ -1,11 +1,15 @@
-ab_parallel_testing_homepage:
-    pattern:  /
-    defaults: { _controller: ABParallelTestingBundle:Default:index }
+ab_parallel_testing_run:
+    pattern:  /run
+    defaults: { _controller: ABParallelTestingBundle:Default:run }
+
+ab_parallel_testing_run_existing_queue:
+    pattern:  /runExistingQueue
+    defaults: { _controller: ABParallelTestingBundle:Default:runExistingQueue }
 
 ab_parallel_testing_update:
     pattern:  /update
     defaults: { _controller: ABParallelTestingBundle:Default:update }
 
 ab_parallel_testing_charts:
-    pattern:  /charts/{type}
-    defaults: { _controller: ABParallelTestingBundle:Default:charts }
+    pattern:  /{type}/{numberOfCoresList}
+    defaults: { _controller: ABParallelTestingBundle:Default:charts, type: 'time', numberOfCoresList: '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16'  }

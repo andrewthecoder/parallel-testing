@@ -21,7 +21,6 @@ return array(
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Oryzone\\Bundle\\BoilerplateBundle' => array($vendorDir . '/oryzone/boilerplate-bundle'),
     'Ob\\HighchartsBundle' => array($vendorDir . '/ob/highcharts-bundle'),
-    'Monolog' => array($vendorDir . '/monolog/monolog/src'),
     'Incenteev\\ParameterHandler' => array($vendorDir . '/incenteev/composer-parameter-handler'),
     'Doctrine\\ORM\\' => array($vendorDir . '/doctrine/orm/lib'),
     'Doctrine\\DBAL\\' => array($vendorDir . '/doctrine/dbal/lib'),
