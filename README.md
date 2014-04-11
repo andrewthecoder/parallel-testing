@@ -1,7 +1,7 @@
 Parallel Technology Comparison Platform
 ========================
 
-Task:
+# Task:
 Develop and measure parallel versions of a program which calculates Euler's totient using the following high-level parallel programming technologies:
 
 * Open Multi-Processing (OpenMP) 
@@ -11,8 +11,9 @@ Develop and measure parallel versions of a program which calculates Euler's toti
 
 Compare the performance and programming models of these technologies.
 
-Solution:
+# Solution:
 Web-based testing and graphing platform, built upon Symfony 2 with a MySQL database.
+Pretty graphs made with help from the Highcharts JS library
 
 -------------------------------
 
