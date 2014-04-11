@@ -138,8 +138,8 @@ class DefaultController extends Controller
                 'cores' => '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16',
                 'runs' => '1',
                 'lowerLimit' => 1,
-                'upperLimitRangeMin' => 100000,
-                'upperLimitRangeMax' => 100000,
+                'upperLimitRangeMin' => 20000,
+                'upperLimitRangeMax' => 20000,
                 'upperLimitRangeIncrement' => false
             )
         );
@@ -401,7 +401,7 @@ class DefaultController extends Controller
                     'openmp' =>     array(100000,1000000,4000000,9000000),
                     'mpi' =>        array(100000,1000000,4000000,9000000),
                     'sac' =>        array(100000,400000,1000000,4000000,9000000),
-                    'haskell' =>    array(1000,5000,10000),
+                    'haskell' =>    array(1000,5000,10000,20000,100000),
                 );
                 
                 $upperLimitsToMakeGraphsOfCombined = array();
@@ -412,10 +412,10 @@ class DefaultController extends Controller
                 $idealSpeedupData = array();
                 // Loop through all requested number of cores and show a graph for each
                 foreach( $numberOfCoresList as $numberOfCores ) {
-                    //$typeResults['haskell'][$numberOfCores] = $repository->findMedianResults('haskell', $numberOfCores);
                     $typeResults['openmp'][$numberOfCores] = $repository->findMedianResults('openmp', $numberOfCores);
                     $typeResults['mpi'][$numberOfCores] = $repository->findMedianResults('mpi', $numberOfCores);
                     $typeResults['sac'][$numberOfCores] = $repository->findMedianResults('sac', $numberOfCores);
+                    $typeResults['haskell'][$numberOfCores] = $repository->findMedianResults('haskell', $numberOfCores);
                     
                     $idealSpeedupData[] = array( (int)$numberOfCores, (int)$numberOfCores );
                 }
@@ -426,11 +426,16 @@ class DefaultController extends Controller
                         $sequentialTimes[$sequentialResult['upperLimit']] = $sequentialResult['clockRunTimeMedian'];
                     }
                 }
-                
                 $sacSequentialResults = $repository->findMedianResults('sac', 1);
                 foreach($sacSequentialResults as $sacSequentialResult) {
                     if( in_array($sacSequentialResult['upperLimit'], $upperLimitsToMakeGraphsOfCombined) ) {
                         $sacSequentialTimes[$sacSequentialResult['upperLimit']] = $sacSequentialResult['clockRunTimeMedian'];
+                    }
+                }
+                $haskellSequentialResults = $repository->findMedianResults('haskell', 1);
+                foreach($haskellSequentialResults as $haskellSequentialResult) {
+                    if( in_array($haskellSequentialResult['upperLimit'], $upperLimitsToMakeGraphsOfCombined) ) {
+                        $haskellSequentialTimes[$haskellSequentialResult['upperLimit']] = $haskellSequentialResult['clockRunTimeMedian'];
                     }
                 }
 
@@ -450,7 +455,11 @@ class DefaultController extends Controller
                     // Make sure we are calculating speedup fairly by comparing SAC results with the SAC results with only one thread
                     // This is because the SAC port is not quite an exact match for the original sequential code
                     if($type == 'sac') {
-                        $sequentialTimes = $sacSequentialTimes;
+                        $typeSequentialTimes = $sacSequentialTimes;
+                    } elseif($type == 'haskell') {
+                        $typeSequentialTimes = $haskellSequentialTimes;
+                    } else {
+                        $typeSequentialTimes = $sequentialTimes;
                     }
                     
                     foreach($typeCoreResults as $core => $coreResults) {
@@ -460,7 +469,7 @@ class DefaultController extends Controller
                                     $coreSpeedup = 0;
                                 } else {
                                     //echo "lookign for sequential time for upperLimit: ".$coreResult['upperLimit'] .": ".$sequentialTimes[ $coreResult['upperLimit'] ];
-                                    $coreSpeedup = round( $sequentialTimes[ $coreResult['upperLimit'] ] / $coreResult['clockRunTimeMedian'], 4 );
+                                    $coreSpeedup = round( $typeSequentialTimes[ $coreResult['upperLimit'] ] / $coreResult['clockRunTimeMedian'], 4 );
                                    // echo "found coreSpeedup = $coreSpeedup for type: $type";
                                 }
                                 $speedupData[ $coreResult['upperLimit'] ][] = array( $core, $coreSpeedup );
