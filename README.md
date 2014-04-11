@@ -12,8 +12,9 @@ Develop and measure parallel versions of a program which calculates Euler's toti
 Compare the performance and programming models of these technologies.
 
 ### Solution:
-Web-based testing and graphing platform, built upon Symfony 2 with a MySQL database.
-Pretty graphs made with help from the Highcharts JS library
+* Web-based testing and graphing platform, built upon Symfony 2 with a MySQL database.
+* Pretty graphs made with help from the Highcharts JS library
+* Badgers
 
 -------------------------------
 ## Get Started
