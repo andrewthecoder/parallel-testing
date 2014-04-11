@@ -1,67 +1,26 @@
-Symfony Standard Edition Skeleton
+Parallel Technology Comparison Platform
 ========================
 
-Welcome to the Symfony Standard Edition, with all the Acme junk, routes and security configuration removed.
-Perfect for cloning in an environment, updating with Composer and getting started on a new project.
+Task:
+Develop and measure parallel versions of a program which calculates Euler's totient using the following high-level parallel programming technologies:
 
-Getting started with this Symfony Skeleton:
+Open Multi-Processing (OpenMP) 
+Message Passing Interface (MPI)
+Glasgow parallel Haskell (GpH)
+Single Assignment C (SaC)
+
+Compare the performance and programming models of these technologies.
+
+Solution:
+Web-based testing and graphing platform, built upon Symfony 2 with a MySQL database.
+
 -------------------------------
 
-#### Download the source, clean up references to this git repository
+#### Download the source
 ````
-git clone git@github.com:andrewthecoder/symfony-skeleton.git
-cd symfony-skeleton
-find . | grep .git | xargs rm -rf
+git clone git@github.com:andrewthecoder/parallel-testing.git
+cd parallel-testing
 ````
+???
 
-#### Fix app/logs and app/cache permissions
-
-On linux web servers with sudo and setfacl, this means:
-````
-rm -rf app/cache/*
-rm -rf app/logs/*
-APACHEUSER=`ps aux | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data' | grep -v root | head -1 | cut -d\  -f1`
-sudo setfacl -R -m u:"$APACHEUSER":rwX -m u:`whoami`:rwX app/cache app/logs
-sudo setfacl -dR -m u:"$APACHEUSER":rwX -m u:`whoami`:rwX app/cache app/logs
-````
-
-On other linux systems with setfacl, find out what the apache user is and put it in the APACHEUSER var:
-````
-rm -rf app/cache/*
-rm -rf app/logs/*
-APACHEUSER=
-setfacl -R -m u:"$APACHEUSER":rwX -m u:`whoami`:rwX app/cache app/logs
-setfacl -dR -m u:"$APACHEUSER":rwX -m u:`whoami`:rwX app/cache app/logs
-````
-
-If neither of these work (no setfacl, for example), there is a umask workaround [here](http://symfony.com/doc/current/book/installation.html).
-
-#### Install Composer, install/update Symfony and check everything is working ok
-````
-curl -sS https://getcomposer.org/installer | php
-php composer.phar install
-````
-
-#### Create your app bundle
-````
-php app/console generate:bundle --namespace={VENDOR NAME}/Bundle/{BUNDLE NAME}Bundle --format=yml
-````
-
-http://symfony.com/doc/current/bundles/SensioGeneratorBundle/commands/generate_bundle.html
-
-#### Initialise your new Github repository with this code
-````
-git init
-git add .
-git commit -m 'initial commit, including symfony2 skeleton'
-git remote add origin git@github.com:{USERNAME}/{REPOSITORY}
-git push origin master
-````
-
-http://symfony.com/doc/current/cookbook/workflow/new_project_git.html
-https://help.github.com/articles/create-a-repo
-
-#### Create pages
-
-http://symfony.com/doc/current/book/page_creation.html
-
+PROFIT!
