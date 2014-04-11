@@ -1,6 +1,6 @@
--- Distributed and parallel technologies, Andrew Beveridge, 03/03/2014
+-- Distributed and parallel technologies, Andrew Beveridge, 03/04/2014
 -- To Compile:		ghc -Wall --make -threaded -cpp -O2 -rtsopts -o ab-totient-gph ab-totient-gph.hs
--- To Run / Time:	/usr/bin/time -v ./ab-totient-gph [range_start] [range_end] [cores] +RTS -N[cores]
+-- To Run / Time:	/usr/bin/time -v ./ab-totient-gph [range_start] [range_end] [threads] +RTS -N[threads]
 
 module Main(main) where
 
@@ -9,14 +9,14 @@ import System.IO
 import Control.Parallel.Strategies
 
 -- The main function, sumTotient  
--- 1. Generates a list of integers between lower and upper
+-- 1. Generates a list of integers between min and max
 -- 2. Applies totient function to every element of the list
 -- 3. Returns the sum of the results
 
 sumTotient :: Int -> Int -> Int -> Int
-sumTotient lower upper cores = sum (
-            (map euler ([lower, lower+1 .. upper]) 
-                `using` parListChunk (((upper-lower) `div` cores)+1) rdeepseq))
+sumTotient min max threads = sum (
+            (map euler ([min, min+1 .. max]) 
+                `using` parListChunk (((max-min) `div` threads)+1) rdeepseq))
 
 -- The euler n function
 -- 1. Generates a list [1,2,3, ... n-1,n]
@@ -41,10 +41,10 @@ hcf x y = hcf y (rem x y)
 
 main = do args <- getArgs
           let 
-            lower = read (args!!0) :: Int -- lower limit of the interval
-            upper = read (args!!1) :: Int -- upper limit of the interval
-            cores = read (args!!2) :: Int -- Number of cores to be run on
+            min = read (args!!0) :: Int -- min limit of the interval
+            max = read (args!!1) :: Int -- max limit of the interval
+            threads = read (args!!2) :: Int -- Number of threads to be run on
           hPutStrLn stderr ("Sum of Totients between [" ++ 
-                      (show lower) ++ ".." ++ (show upper) ++ "] is " ++ 
-                       show (sumTotient lower upper cores) )
+                      (show min) ++ ".." ++ (show max) ++ "] is " ++ 
+                       show (sumTotient min max threads) )
                        

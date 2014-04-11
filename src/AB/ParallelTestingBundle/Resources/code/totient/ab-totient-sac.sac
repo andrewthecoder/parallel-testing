@@ -1,4 +1,4 @@
-// Distributed and parallel technologies, Andrew Beveridge, 03/03/2014
+// Distributed and parallel technologies, Andrew Beveridge, 03/04/2014
 // To Compile:		sac2c -doAWLF -mt -o ab-totient-sac ab-totient-sac.sac
 // To Run / Time:	/usr/bin/time -v ./ab-totient-sac range_start range_end -mt cores
 

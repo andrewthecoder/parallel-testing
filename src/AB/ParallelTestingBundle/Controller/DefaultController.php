@@ -107,7 +107,7 @@ class DefaultController extends Controller
             */
             
             // These tests are fast (sequential takes 1 second at 900000), but haskell takes decades so we're giving up on haskell from here onwards
-            /*
+            
             array(
                 'types' => 'openmp,mpi,sac',
                 'cores' => '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16', // 
@@ -117,7 +117,7 @@ class DefaultController extends Controller
                 'upperLimitRangeMax' => 900000,
                 'upperLimitRangeIncrement' => 100000
             ),
-            */
+            
             
             // These tests are the beefy ones. Sequential takes 3 seconds at 2M, 12 seconds at 5M, and 27 seconds at 9M
             /*
@@ -132,16 +132,16 @@ class DefaultController extends Controller
             )
             */
             
-            // lets try and squeeze haskell
+            /*// lets try and squeeze haskell
             array(
                 'types' => 'haskell',
                 'cores' => '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16',
                 'runs' => '1',
                 'lowerLimit' => 1,
-                'upperLimitRangeMin' => 20000,
-                'upperLimitRangeMax' => 20000,
-                'upperLimitRangeIncrement' => false
-            )
+                'upperLimitRangeMin' => 30000,
+                'upperLimitRangeMax' => 50000,
+                'upperLimitRangeIncrement' => 10000
+            )*/
         );
 
         $cachedTestQueue = array();
@@ -380,7 +380,7 @@ class DefaultController extends Controller
                         array('type' => 'spline','color' => '#89A54E','name' => 'OpenMP', 'data' => $openmpData),
                         array('type' => 'spline','color' => '#4572A7','name' => 'MPI', 'data' => $mpiData),
                         array('type' => 'spline','color' => '#C49C45','name' => 'SAC', 'data' => $sacData),
-                        array('type' => 'spline','color' => '#8045A7','name' => 'GPH', 'data' => $haskellData)
+                        array('type' => 'spline','color' => '#8045A7','name' => 'GPH', 'visible' => false, 'data' => $haskellData)
                     ));
                     
                     // Add the chart we just built to the output
@@ -400,8 +400,8 @@ class DefaultController extends Controller
                 $upperLimitsToMakeGraphsOfByType = array(
                     'openmp' =>     array(100000,1000000,4000000,9000000),
                     'mpi' =>        array(100000,1000000,4000000,9000000),
-                    'sac' =>        array(100000,400000,1000000,4000000,9000000),
-                    'haskell' =>    array(1000,5000,10000,20000,100000),
+                    'sac' =>        array(100000,1000000,4000000,9000000),
+                    'haskell' =>    array(1000,5000,10000,50000,100000),
                 );
                 
                 $upperLimitsToMakeGraphsOfCombined = array();
