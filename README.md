@@ -4,10 +4,10 @@ Parallel Technology Comparison Platform
 Task:
 Develop and measure parallel versions of a program which calculates Euler's totient using the following high-level parallel programming technologies:
 
-Open Multi-Processing (OpenMP) 
-Message Passing Interface (MPI)
-Glasgow parallel Haskell (GpH)
-Single Assignment C (SaC)
+* Open Multi-Processing (OpenMP) 
+* Message Passing Interface (MPI)
+* Glasgow parallel Haskell (GpH)
+* Single Assignment C (SaC)
 
 Compare the performance and programming models of these technologies.
 
