@@ -17,6 +17,7 @@ class DefaultController extends Controller
     public function runAction()
     {
 		$testTempDirectory = $this->container->getParameter('kernel.cache_dir') . '/ABParallelTestingBundle';
+        $totientProgramNames = "ab-totient-sequential ab-totient-omp ab-totient-mpi ab-totient-sac ab-totient-gph mpirun";
 		
 		$fs = new Filesystem();
 		if( $fs->exists($testTempDirectory) === false ) {
@@ -25,34 +26,56 @@ class DefaultController extends Controller
 			} catch (IOException $e) {
 				echo "An error occurred while attempting to create temporary directory $testTempDirectory";
 			}
-		}
+		} else {
+            // temp directory exists, clear it before running
+            $files = glob($testTempDirectory.'/*'); // get all file names
+            foreach($files as $file){ // iterate files
+                if(is_file($file))
+                    unlink($file); // delete file
+            }
+        }
+        
+        // Clean up any "running" tests from the database
+        $testRepository = $this->getDoctrine()->getRepository('ABParallelTestingBundle:Test');
+        $runningTest = $testRepository->findOneByStatus('running');
+        if($runningTest) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($runningTest);
+            $em->flush();
+        }
 
+        // Our database now thinks no tests are running. Let's check process names and kill for good measure.
+        foreach( explode(' ', $totientProgramNames) as $totientProgramName ) {
+            $pidOfAnyTotientProgramsProcess = new Process("pidof $totientProgramName 2>&1");
+            $pidOfAnyTotientProgramsProcess->run();
+            $pidOfAnyTotientPrograms = $pidOfAnyTotientProgramsProcess->getOutput();
+            if( empty($pidOfAnyTotientPrograms) !== true ) {
+                $killAllTotientProgramsProcess = new Process("killall $totientProgramName 2>&1");
+                $killAllTotientProgramsProcess->run();
+            }
+        }
+        
         // Generate queue of tests to perform from ranges and multipliers etc
         // For each entry, if the range min and max are equal exactly one test will be performed
         // otherwise, test at the lower limit range value then increment by the increment value until reaching the upper value
         // therefore, a test will always be performed at both the lower and upper range values
         $testsToPerform = array(
-            /*array(
-                'types' => 'sequential,openmp,mpi,sac,haskell',
-                'cores' => '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16',
+            // First run the sequential test 3 times for every upperLimit value we are interested in.
+            // Each individual sequential test actually generates 16 completed tests on completion, one for each of the possible number of thread values
+            // This allows us to easily plot sequential alongside the parallel results without running it 16 times unnecessarily
+            /*
+            array(
+                'types' => 'sequential',
+                'cores' => '1',
                 'runs' => '3',
                 'lowerLimit' => 1,
                 'upperLimitRangeMin' => 1000,
-                'upperLimitRangeMax' => 9000,
+                'upperLimitRangeMax' => 10000,
                 'upperLimitRangeIncrement' => 1000
             ),
             array(
-                'types' => 'sequential,openmp,mpi,sac,haskell',
-                'cores' => '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16',
-                'runs' => '3',
-                'lowerLimit' => 1,
-                'upperLimitRangeMin' => 10000,
-                'upperLimitRangeMax' => 10000,
-                'upperLimitRangeIncrement' => false
-            ),*/
-            array(
-                'types' => 'sequential,openmp,mpi,sac',
-                'cores' => '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16', // 
+                'types' => 'sequential',
+                'cores' => '1', // 
                 'runs' => '3',
                 'lowerLimit' => 1,
                 'upperLimitRangeMin' => 100000,
@@ -60,13 +83,64 @@ class DefaultController extends Controller
                 'upperLimitRangeIncrement' => 100000
             ),
             array(
-                'types' => 'sequential,openmp,mpi,sac',
-                'cores' => '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16', // 
+                'types' => 'sequential',
+                'cores' => '1',
                 'runs' => '3',
                 'lowerLimit' => 1,
                 'upperLimitRangeMin' => 1000000,
                 'upperLimitRangeMax' => 9000000,
                 'upperLimitRangeIncrement' => 1000000
+            ),
+            */
+            
+             // Test only the low ish values with Glasgow Parallel Haskell as well, as it is extraordinarily slow (significantly slower than sequential...!)
+             /*
+             array(
+                'types' => 'openmp,mpi,sac,haskell',
+                'cores' => '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16',
+                'runs' => '3',
+                'lowerLimit' => 1,
+                'upperLimitRangeMin' => 1000,
+                'upperLimitRangeMax' => 10000,
+                'upperLimitRangeIncrement' => 1000
+            ),
+            */
+            
+            // These tests are fast (sequential takes 1 second at 900000), but haskell takes decades so we're giving up on haskell from here onwards
+            /*
+            array(
+                'types' => 'openmp,mpi,sac',
+                'cores' => '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16', // 
+                'runs' => '3',
+                'lowerLimit' => 1,
+                'upperLimitRangeMin' => 100000,
+                'upperLimitRangeMax' => 900000,
+                'upperLimitRangeIncrement' => 100000
+            ),
+            */
+            
+            // These tests are the beefy ones. Sequential takes 3 seconds at 2M, 12 seconds at 5M, and 27 seconds at 9M
+            /*
+            array(
+                'types' => 'openmp,mpi,sac',
+                'cores' => '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16',
+                'runs' => '3',
+                'lowerLimit' => 1,
+                'upperLimitRangeMin' => 1000000,
+                'upperLimitRangeMax' => 9000000,
+                'upperLimitRangeIncrement' => 1000000
+            )
+            */
+            
+            // lets try and squeeze haskell
+            array(
+                'types' => 'haskell',
+                'cores' => '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16',
+                'runs' => '1',
+                'lowerLimit' => 1,
+                'upperLimitRangeMin' => 100000,
+                'upperLimitRangeMax' => 100000,
+                'upperLimitRangeIncrement' => false
             )
         );
 
@@ -153,7 +227,7 @@ class DefaultController extends Controller
                 $programOutputText = preg_replace( '|Sum of Totients .+? is 0[ \n\r]*|', '', $runningTest->getProgramOutput() );
                 $programOutputText = trim( $programOutputText );
                 
-				$updateOutput = "Program output: '{$programOutputText}'\nTest {$runningTest->getId()} complete: Calculated totients from {$runningTest->getLowerLimit()}-{$runningTest->getUpperLimit()} using {$runningTest->getCores()} cores in {$runningTest->getClockRunTime()} seconds.\n\n";
+				$updateOutput = "Program output: '{$programOutputText}'\nTest {$runningTest->getId()} complete: Calculated totients from {$runningTest->getLowerLimit()}-{$runningTest->getUpperLimit()} using {$runningTest->getType()} with {$runningTest->getCores()} threads in {$runningTest->getClockRunTime()} seconds.\n\n";
 			} else {
                 $currentTestStatus = 'running';
 				$updateOutput = $testStatus;
@@ -166,7 +240,9 @@ class DefaultController extends Controller
 				$this->writeTestQueue($testQueue);
 				
 				$testID = $this->createTest($newTestParameters->type, $newTestParameters->lowerLimit, $newTestParameters->upperLimit, $newTestParameters->cores);
-				
+				$testType = $newTestParameters->type;
+                $testCores = $newTestParameters->cores;
+                
 				$testPrepared = $this->prepareTest($testID);
 				if( $testPrepared === true ) {
 					$testStarted = $this->startTest($testID);
@@ -190,7 +266,11 @@ class DefaultController extends Controller
         
         // get load average to show regularly in box
         $load = sys_getloadavg();
-        $oneMinuteLoad = $load[0];
+        
+        $top5CPUProcessesCommand = 'ps axo pcpu,comm,pid | sort -nr | head -n 5';
+        $top5CPUProcessesProcess = new Process("$top5CPUProcessesCommand 2>&1");
+        $top5CPUProcessesProcess->run();
+        $top5CPUProcesses = $top5CPUProcessesProcess->getOutput();
         
 		// queue possible values: 'running','finished'
 		// test possible values: 'systemNotReady', 'prepareTestFailed', 'startTestFailed', 'started', 'running', 'finished'
@@ -198,8 +278,11 @@ class DefaultController extends Controller
 				'queueStatus' => $queueStatus,
                 'queueLength' => $testsInQueue,
                 'testStatus' => $currentTestStatus,
+                'testType' => isset($testType) ? $testType : '',
+                'testThreads' => isset($testCores) ? $testCores : 0,
                 'testID' => isset($testID) ? $testID : 0,
-                'loadAverage' => $oneMinuteLoad,
+                'loadAverage' => $load,
+                'top5CPUProcesses' => $top5CPUProcesses,
 				'message' => $updateOutput
 		)));
 		$response->setStatusCode(Response::HTTP_OK);
@@ -210,22 +293,20 @@ class DefaultController extends Controller
 	public function chartsAction($type, $numberOfCoresList) {
 		$repository = $this->getDoctrine()->getRepository('ABParallelTestingBundle:Test');
 
-        $numberOfCoresList = explode(',',$numberOfCoresList);
-
         $allChartsToDisplay = array();
-        
-        // Loop through all requested number of cores and show a graph for each
-        foreach( $numberOfCoresList as $numberOfCores ) {
-            
-            $slowsequential = $repository->findMedianResults('slowsequential', $numberOfCores);
-            $haskell = $repository->findMedianResults('haskell', $numberOfCores);
-            $sequential = $repository->findMedianResults('sequential', $numberOfCores);
-            $openmp = $repository->findMedianResults('openmp', $numberOfCores);
-            $mpi = $repository->findMedianResults('mpi', $numberOfCores);
-            $sac = $repository->findMedianResults('sac', $numberOfCores);
+
+        switch($type) {
+            case 'time':
+                $numberOfCoresList = explode(',',$numberOfCoresList);
                 
-            switch($type) {
-                case 'time':
+                // Loop through all requested number of cores and show a graph for each
+                foreach( $numberOfCoresList as $numberOfCores ) {
+                    $haskell = $repository->findMedianResults('haskell', $numberOfCores);
+                    $sequential = $repository->findMedianResults('sequential', $numberOfCores);
+                    $openmp = $repository->findMedianResults('openmp', $numberOfCores);
+                    $mpi = $repository->findMedianResults('mpi', $numberOfCores);
+                    $sac = $repository->findMedianResults('sac', $numberOfCores);
+                        
                     $currentChart = new Highchart();
                     
                     // Set numberOfCores in this chart variable so twig can display it
@@ -234,7 +315,7 @@ class DefaultController extends Controller
                     
                     // Tell chart which div it should render inside and give it a heading
                     $currentChart->chart->renderTo("chart_{$type}_{$numberOfCores}");  // The #id of the div where to render the chart
-                    $currentChart->title->text("Time graph with {$numberOfCores} threads");
+                    $currentChart->title->text("Execution time graph with {$numberOfCores} threads");
 
                     // Allow zooming
                     $currentChart->chart->zoomType('xy');
@@ -244,11 +325,6 @@ class DefaultController extends Controller
                         if(!is_null($result['clockRunTimeMedian']))
                             $sequentialData[] = array($result['upperLimit'], (float)$result['clockRunTimeMedian']);
                     }
-                    /*$slowSequentialData = array();
-                    foreach($slowsequential as $result) {
-                        if(!is_null($result['clockRunTimeMedian']))
-                            $slowSequentialData[] = array($result['upperLimit'], (float)$result['clockRunTimeMedian']);
-                    }*/
                     $openmpData = array();
                     foreach($openmp as $result) {
                         if(!is_null($result['clockRunTimeMedian']))
@@ -309,42 +385,93 @@ class DefaultController extends Controller
                     
                     // Add the chart we just built to the output
                     $allChartsToDisplay[] = $currentChart;
-                break;
+                } // end looping through $numberOfCoresList
+
+                return $this->render('ABParallelTestingBundle:Default:timeCharts.html.twig', array(
+                    'allChartsToDisplay' => $allChartsToDisplay,
+                ));
+            break;
                 
-                case 'speedup':
+            case 'speedup':
+                $numberOfCoresList = explode(',',$numberOfCoresList);
+
+                $typeResults = array();
+
+                $upperLimitsToMakeGraphsOfByType = array(
+                    'openmp' =>     array(100000,1000000,4000000,9000000),
+                    'mpi' =>        array(100000,1000000,4000000,9000000),
+                    'sac' =>        array(100000,400000,1000000,4000000,9000000),
+                    'haskell' =>    array(1000,5000,10000),
+                );
+                
+                $upperLimitsToMakeGraphsOfCombined = array();
+                foreach($upperLimitsToMakeGraphsOfByType as $mergeThis) {
+                    $upperLimitsToMakeGraphsOfCombined = array_merge($upperLimitsToMakeGraphsOfCombined, $mergeThis);
+                }
+                
+                $idealSpeedupData = array();
+                // Loop through all requested number of cores and show a graph for each
+                foreach( $numberOfCoresList as $numberOfCores ) {
+                    //$typeResults['haskell'][$numberOfCores] = $repository->findMedianResults('haskell', $numberOfCores);
+                    $typeResults['openmp'][$numberOfCores] = $repository->findMedianResults('openmp', $numberOfCores);
+                    $typeResults['mpi'][$numberOfCores] = $repository->findMedianResults('mpi', $numberOfCores);
+                    $typeResults['sac'][$numberOfCores] = $repository->findMedianResults('sac', $numberOfCores);
+                    
+                    $idealSpeedupData[] = array( (int)$numberOfCores, (int)$numberOfCores );
+                }
+                
+                $sequentialResults = $repository->findMedianResults('sequential', 1);
+                foreach($sequentialResults as $sequentialResult) {
+                    if( in_array($sequentialResult['upperLimit'], $upperLimitsToMakeGraphsOfCombined) ) {
+                        $sequentialTimes[$sequentialResult['upperLimit']] = $sequentialResult['clockRunTimeMedian'];
+                    }
+                }
+                
+                $sacSequentialResults = $repository->findMedianResults('sac', 1);
+                foreach($sacSequentialResults as $sacSequentialResult) {
+                    if( in_array($sacSequentialResult['upperLimit'], $upperLimitsToMakeGraphsOfCombined) ) {
+                        $sacSequentialTimes[$sacSequentialResult['upperLimit']] = $sacSequentialResult['clockRunTimeMedian'];
+                    }
+                }
+
+                foreach($typeResults as $type => $typeCoreResults) {
                     $currentChart = new Highchart();
-
-                    // Set numberOfCores in this chart variable so twig can display it
-                    $currentChart->numberOfCores = $numberOfCores;
                     $currentChart->type = $type;
-
+    
                     // Tell chart which div it should render inside and give it a heading
-                    $currentChart->chart->renderTo("chart_{$type}_{$numberOfCores}");  // The #id of the div where to render the chart
-                    $currentChart->title->text("Speedup graph with {$numberOfCores} threads");
-
+                    $currentChart->chart->renderTo("chart_{$type}");  // The #id of the div where to render the chart
+                    $currentChart->title->text("Speedup graphs for programming architecture '$type'");
+    
                     // Allow zooming
                     $currentChart->chart->zoomType('xy');
+
+                    $speedupData = array();
                     
-                    $sequentialData = array();
-                    foreach($sequential as $result) {
-                        if(!is_null($result['clockRunTimeMedian']))
-                            $sequentialData[] = array($result['upperLimit'], (float)$result['clockRunTimeMedian']);
+                    // Make sure we are calculating speedup fairly by comparing SAC results with the SAC results with only one thread
+                    // This is because the SAC port is not quite an exact match for the original sequential code
+                    if($type == 'sac') {
+                        $sequentialTimes = $sacSequentialTimes;
                     }
-                    $openmpData = array();
-                    foreach($openmp as $result) {
-                        if(!is_null($result['clockRunTimeMedian']))
-                        $openmpData[] = array($result['upperLimit'], (float)$result['clockRunTimeMedian']);
-                    }
-                    $idealSpeedupData = array();
-                    foreach($sequential as $result) {
-                        if(!is_null($result['clockRunTimeMedian']))
-                            $idealSpeedupData[] = array($result['upperLimit'], (float)$result['clockRunTimeMedian']/10);
+                    
+                    foreach($typeCoreResults as $core => $coreResults) {
+                        foreach($coreResults as $coreResult) {
+                            if( in_array($coreResult['upperLimit'], $upperLimitsToMakeGraphsOfByType[$type]) ) {
+                                if($coreResult['clockRunTimeMedian'] == 0) {
+                                    $coreSpeedup = 0;
+                                } else {
+                                    //echo "lookign for sequential time for upperLimit: ".$coreResult['upperLimit'] .": ".$sequentialTimes[ $coreResult['upperLimit'] ];
+                                    $coreSpeedup = round( $sequentialTimes[ $coreResult['upperLimit'] ] / $coreResult['clockRunTimeMedian'], 4 );
+                                   // echo "found coreSpeedup = $coreSpeedup for type: $type";
+                                }
+                                $speedupData[ $coreResult['upperLimit'] ][] = array( $core, $coreSpeedup );
+                            }
+                        }
                     }
                     
                     $xData = array(
                         array(
                             'title' => array(
-                                'text'  => 'Totient Range Upper Limit',
+                                'text'  => 'Threads',
                                 'style' => array('color' => '#000000')
                             ),
                             'opposite' => true
@@ -354,36 +481,36 @@ class DefaultController extends Controller
                     
                     $yData = array(
                         array(
-                            'labels' => array(
-                                'formatter' => new Expr('function () { return this.value + " s" }')
-                            ),
                             'title' => array(
-                                'text'  => 'Execution Time',
+                                'text'  => 'Speedup',
                                 'style' => array('color' => '#000000')
                             )
                         )
                     );
                     $currentChart->yAxis($yData);
                     
-                    $formatter = new Expr('function () {
-                             return "<b>Execution Type:</b> "+this.series.name+"<br /><br /><b>Totient Range:</b> 1 to " + this.x + "<br /><b>Average Time:</b> " + this.y + " seconds";
-                         }');
-                    $currentChart->tooltip->formatter($formatter);
-                    $currentChart->series(array(
-                        array('type' => 'spline','color' => '#AA4643','name' => 'Good Sequential', 'data' => $sequentialData),
-                        array('type' => 'spline','color' => '#89A54E','name' => 'OpenMP', 'data' => $openmpData),
-                        array('type' => 'spline','color' => '#4572A7','name' => 'Ideal Speedup (10x)', 'data' => $idealSpeedupData)
-                    ));
+                    $seriesArray = array(
+                        array('type' => 'spline','color' => '#89A54E','name' => 'Ideal Speedup', 'data' => $idealSpeedupData)
+                    );
+                    $colours = array('#AA4643','#4572A7','#C49C45','#8045A7','#5BD1DE');
+                    $colour = 0;
+                    foreach( $upperLimitsToMakeGraphsOfByType[$type] as $upperLimit ) {
+                        $seriesArray[] = array('type' => 'spline','color' => $colours[$colour++],'name' => "Speedup ($upperLimit totients)", 'data' => $speedupData[$upperLimit]);
+                    }
+                    
+                    
+                    $currentChart->series($seriesArray);
                     
                     // Add the chart we just built to the output
                     $allChartsToDisplay[] = $currentChart;
-                break;
-            } // end switch of graph type
-        } // end looping through $numberOfCoresList
+                }
+                
+                return $this->render('ABParallelTestingBundle:Default:speedupCharts.html.twig', array(
+                    'allChartsToDisplay' => $allChartsToDisplay,
+                ));
+            break;
+        } // end switch of graph type
         
-		return $this->render('ABParallelTestingBundle:Default:charts.html.twig', array(
-            'allChartsToDisplay' => $allChartsToDisplay,
-        ));
 	}
 	
 	public function readTestQueue($cached = true) {
@@ -496,8 +623,8 @@ class DefaultController extends Controller
 		// If we have 75% CPU available that's good enough for me.
 		// Because this is a one minute load average, this will probably introduce a bit of unnecessary delay between processes while the average drops.
 		$load = sys_getloadavg();
-		if ($load[0] > 2) {
-			return "System load is too high to start a new test yet, waiting for it to drop. 1 minute load average: {$load[0]}";
+		if ($load[0] > 4) {
+			return "System load is {$load[0]}, too high for a new test";
 		}
 		
 		// No tests seem to be running, and the CPU isn't stressed. We're ready!
@@ -537,6 +664,7 @@ class DefaultController extends Controller
 	public function checkTestFinished($testID) {
 		$testTempDirectory = $this->container->getParameter('kernel.cache_dir') . '/ABParallelTestingBundle';
 		$test = $this->getDoctrine()->getRepository('ABParallelTestingBundle:Test')->find($testID);
+        $em = $this->getDoctrine()->getManager();
 		if (!$test) {
 			throw $this->createNotFoundException(
 				'No test found for id '.$testID
@@ -551,17 +679,38 @@ class DefaultController extends Controller
 		$pid = $test->getProcessPID();
 		$psProcess = new Process("ps -p $pid 2>&1");
 		$psProcess->run();
-		$psOutput = $psProcess->getOutput(); 
+		$psOutput = $psProcess->getOutput();
 		if(strpos($psOutput, ':') !== false) {
 			// There's a colon in the ps output, so the test must still be running.
 			return $psOutput;
 		} else {
 			// Process seems to have finished, load output files into database and set status
 			$programOutputPath = "$testTempDirectory/testID-$testID-programOutput.txt";
-			$test->setProgramOutput( file_get_contents($programOutputPath) );
-			unlink($programOutputPath);
-			
-			$timeOutputPath = "$testTempDirectory/testID-$testID-timeOutput.txt";
+            $timeOutputPath = "$testTempDirectory/testID-$testID-timeOutput.txt";
+            
+            // Try opening file until file is created - this is just in case the transcode process takes a while to start up
+            // Log how long we've been waiting, error if more than 10 seconds
+            $sleepTime = 0;
+            while(1) {
+                $programOutputFilePointer = @fopen($programOutputPath, 'rb');
+                $timeOutputFilePointer = @fopen($timeOutputPath, 'rb');
+                if( $programOutputFilePointer === FALSE AND $timeOutputFilePointer === FALSE ) {
+                    if ( $sleepTime > 10 ) {
+                        die("Couldn't find program or time output file after 10 seconds");
+                    }
+                    // Sleep for 0.01 seconds at a time between polling fopen for output file
+                    usleep(10000);
+                    $sleepTime+=0.01;
+                } else {
+                    if(strlen(trim(file_get_contents($timeOutputPath))) > 1) {
+                        break;
+                    }
+                }
+            }
+            
+            $programOut = file_get_contents($programOutputPath);
+            $test->setProgramOutput( $programOut );
+            
 			$timeOut = file_get_contents($timeOutputPath);
             $test->setTimeOutput( $timeOut );
 			
@@ -575,12 +724,34 @@ class DefaultController extends Controller
 			$test->setCpuPercent($cpuPercent);
 			$test->setSystemRunTime($systemRunTime);
 			$test->setClockRunTime($clockRunTime);
-			unlink($timeOutputPath);
 			
 			$test->setStatus('finished');
-			$em = $this->getDoctrine()->getManager();
+            
 			$em->flush();
-			return true;
+			
+            if($test->getType() == 'sequential' AND $test->getCores() == 1) {
+                $upperLimit = $test->getUpperLimit();
+                for($fakeCores=2; $fakeCores<=16; $fakeCores++) {
+                    $test = new Test();
+                    $test->setType('sequential');
+                    $test->setLowerLimit(1);
+                    $test->setUpperLimit($upperLimit);
+                    $test->setCores($fakeCores);
+                    
+                    $test->setTimeOutput( $timeOut );
+                    $test->setProgramOutput( $programOut );
+                    
+                    $test->setCpuPercent($cpuPercent);
+                    $test->setSystemRunTime($systemRunTime);
+                    $test->setClockRunTime($clockRunTime);
+
+                    $test->setStatus('finished');
+                    $em->persist($test);
+                }
+                $em->flush();
+            }
+            
+            return true;
 		}
 	}
 	

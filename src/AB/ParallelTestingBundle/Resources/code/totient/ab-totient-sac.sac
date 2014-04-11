@@ -1,5 +1,5 @@
 // Distributed and parallel technologies, Andrew Beveridge, 03/03/2014
-// To Compile:		sac2c -o ab-totient-sac ab-totient-sac.sac
+// To Compile:		sac2c -doAWLF -mt -o ab-totient-sac ab-totient-sac.sac
 // To Run / Time:	/usr/bin/time -v ./ab-totient-sac range_start range_end -mt cores
 
 use StdIO: all;
@@ -55,11 +55,6 @@ int main() {
 	result = with {
         ( [0] <= iv <= [upper - lower]) : getTotient( tod(iv[0] + lower) );
     } : fold(+, 0d);
-	
-    //result = 0d;
-	//for (i = lower; i <= upper; i++) {
-	//	result = result + getTotient( tod(i) );
-	//}
 	
 	// Print the result
 	printf("Sum of Totients between [%d..%d] is %.f \n", lower, upper, result);

@@ -59,16 +59,17 @@ class TestRepository extends EntityRepository
                 $cpuPercents[] = $resultArray['cpuPercent'];
             }
             
-            $mid = (int)(count($clockRunTimes) / 2);
+            $resultCount = count($clockRunTimes);
+            $mid = $resultCount > 1 ? (int)($resultCount / 2) : 0;
             
             rsort($clockRunTimes);
-            $clockRunTimeMedian = (($mid % 2 != 0) OR $mid == 1) ? $clockRunTimes[$mid] : (($clockRunTimes[$mid-1]) + $clockRunTimes[$mid]) / 2;
+            $clockRunTimeMedian = (($mid % 2 != 0) OR $mid == 0) ? $clockRunTimes[$mid] : (($clockRunTimes[$mid-1]) + $clockRunTimes[$mid]) / 2;
 
             rsort($systemRunTimes);
-            $systemRunTimeMedian = (($mid % 2 != 0) OR $mid == 1) ? $systemRunTimes[$mid] : (($systemRunTimes[$mid-1]) + $systemRunTimes[$mid]) / 2;
+            $systemRunTimeMedian = (($mid % 2 != 0) OR $mid == 0) ? $systemRunTimes[$mid] : (($systemRunTimes[$mid-1]) + $systemRunTimes[$mid]) / 2;
 
             rsort($cpuPercents);
-            $cpuPercentMedian = (($mid % 2 != 0) OR $mid == 1) ? $cpuPercents[$mid] : (($cpuPercents[$mid-1]) + $cpuPercents[$mid]) / 2;
+            $cpuPercentMedian = (($mid % 2 != 0) OR $mid == 0) ? $cpuPercents[$mid] : (($cpuPercents[$mid-1]) + $cpuPercents[$mid]) / 2;
 
             $resultsArray[] = array (
                 'type' => $type,
