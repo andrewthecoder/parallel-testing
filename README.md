@@ -16,6 +16,7 @@ Web-based testing and graphing platform, built upon Symfony 2 with a MySQL datab
 Pretty graphs made with help from the Highcharts JS library
 
 -------------------------------
+## Get Started
 
 #### Download the source
 ````
